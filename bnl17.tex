@@ -1,0 +1,92 @@
+\documentclass{beamer}
+
+\definecolor{theme}{HTML}{2471A3}
+\definecolor{accent}{HTML}{E74C3C}
+\definecolor{offblack}{HTML}{34495E}
+\setbeamercolor{normal text}{fg=offblack}
+
+\usecolortheme{rose}
+\usecolortheme{dolphin}
+
+% modified version of default frametitle with horizontal separation line
+\makeatletter
+\setbeamertemplate{frametitle}{
+  \ifbeamercolorempty[bg]{frametitle}{}{\nointerlineskip}%
+  \@tempdima=\textwidth%
+  \advance\@tempdima by\beamer@leftmargin%
+  \advance\@tempdima by\beamer@rightmargin%
+  \begin{beamercolorbox}[sep=0.3cm,left,wd=\the\@tempdima]{frametitle}
+    \usebeamerfont{frametitle}%
+    \vbox{}\vskip-2ex%
+    \if@tempswa\else\csname beamer@fteleft\endcsname\fi%
+    \strut\insertframetitle\strut\par%
+    {%
+      \ifx\insertframesubtitle\@empty%
+      \else%
+      {\usebeamerfont{framesubtitle}\usebeamercolor[fg]{framesubtitle}\insertframesubtitle\strut\par}%
+      \fi
+    }%
+    \vskip.45ex%
+    \hrule %height .6pt%
+    \vskip-1.45ex%
+    \if@tempswa\else\vskip-.3cm\fi%
+  \end{beamercolorbox}%
+}
+\makeatother
+
+% clean up footer
+\beamertemplatenavigationsymbolsempty
+\defbeamertemplate{footline}{custom footline}{
+  \usebeamercolor[fg]{page number in head/foot}
+  \usebeamerfont{page number in head/foot}
+  \quad
+  \insertshortauthor\enskip(\insertshortinstitute)
+  \hfill
+  \insertshorttitle
+  \hfill
+  \insertframenumber\,/\,\inserttotalframenumber\kern1em\vskip2pt
+}
+\setbeamertemplate{footline}[custom footline]
+
+\useinnertheme{default}
+
+\setbeamertemplate{itemize items}[circle]
+\setbeamercolor{itemize item}{fg=theme!60!white}
+\setbeamercolor{itemize subitem}{fg=theme!60!white}
+
+\usepackage{graphicx}
+\graphicspath{fig}
+
+\usepackage[T1]{fontenc}
+% main font
+\usepackage[default]{lato}
+% improves consistency of Greek letters in math mode
+\usepackage{newtxsf}
+
+% alternate font
+\usepackage[nosfdefault]{raleway}
+% set as the default rm font [even though it really isn't roman]
+\renewcommand*\rmdefault{Raleway-TLF}
+% and use as the frame title font
+\setbeamerfont{frametitle}{family=\rm}
+
+
+\title[Nucleon substructure]{Flow in small and large QGP droplets: role of nucleon substructure}
+\author[J.\ S.\ Moreland]{J.\ S.\ Moreland,\, J.\ E.\ Bernhard,\, W.\ Ke,\, S.\ A.\ Bass}
+\institute[Duke U.]{Duke University}
+\date{\today}
+
+\begin{document}
+
+\section{Title}
+
+\begin{frame}[plain,noframenumbering]
+  \centering
+  {\color{theme}\Large\rm\inserttitle} \\[.05\textheight]
+  {\normalsize\insertauthor} \\
+  {\normalsize\insertinstitute} \\[.1\textheight]
+\end{frame}
+
+\section{Introduction}
+
+\end{document}
