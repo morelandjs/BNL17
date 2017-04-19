@@ -1,10 +1,11 @@
 \documentclass{beamer}
 
 \definecolor{theme}{HTML}{2471A3}
-\definecolor{accent}{HTML}{E74C3C}
-\definecolor{offblack}{HTML}{34495E}
+\definecolor{accent}{HTML}{6272B5}
+\definecolor{offblack}{HTML}{2E4053}
 \setbeamercolor{normal text}{fg=offblack}
 
+\usecolortheme[named=theme]{structure}
 \usecolortheme{rose}
 \usecolortheme{dolphin}
 
@@ -55,13 +56,19 @@
 \setbeamercolor{itemize subitem}{fg=theme!60!white}
 
 \usepackage{graphicx}
-\graphicspath{fig}
+\graphicspath{{fig/}}
+
+\usepackage{tikz}
+\usepackage{tikzscale}
+\usetikzlibrary{positioning, calc}
+
+\usepackage{amsmath}
 
 \usepackage[T1]{fontenc}
-% main font
+%% main font
 \usepackage[default]{lato}
-% improves consistency of Greek letters in math mode
-\usepackage{newtxsf}
+%% improves consistency of Greek letters in math mode
+%\usepackage{newtxsf}
 
 % alternate font
 \usepackage[nosfdefault]{raleway}
@@ -70,21 +77,77 @@
 % and use as the frame title font
 \setbeamerfont{frametitle}{family=\rm}
 
+% tikz grid overlay
+\newcommand{\grid}{
+  \begin{tikzpicture}[remember picture, overlay]
+    \draw[step=1cm, gray, very thin] (current page.south west) grid (current page.north east);
+  \end{tikzpicture}
+}
 
-\title[Nucleon substructure]{Flow in small and large QGP droplets: role of nucleon substructure}
+% place figure at tikz coordinate
+\newcommand{\lead}[1]{
+  \node (position) at (8.5 cm, -5 cm) {\includegraphics[scale=0.3]{#1}};
+}
+
+\title[Nucleon substructure]{Probing nucleon substructure with Bayesian parameter estimation}
 \author[J.\ S.\ Moreland]{J.\ S.\ Moreland,\, J.\ E.\ Bernhard,\, W.\ Ke,\, S.\ A.\ Bass}
-\institute[Duke U.]{Duke University}
+\institute[Duke U.]{Duke Univerity}
 \date{\today}
 
 \begin{document}
 
 \section{Title}
 
-\begin{frame}[plain,noframenumbering]
-  \centering
-  {\color{theme}\Large\rm\inserttitle} \\[.05\textheight]
-  {\normalsize\insertauthor} \\
-  {\normalsize\insertinstitute} \\[.1\textheight]
+\usebackgroundtemplate{%
+\tikz[overlay,remember picture] \node[opacity=1, at=(current page.center)] {
+   \includegraphics{cover}};
+}
+
+
+\begin{frame}[t,plain,noframenumbering]
+  \centering \vspace{.2\textheight}
+  {\color{theme}\Large\rm\inserttitle} \\[.04\textheight]
+  {\normalsize \insertauthor---Duke U.} \\
+  {\normalsize BNL RIKEN Seminar, May 5, 2017}
+\end{frame}
+
+\usebackgroundtemplate{}
+
+\begin{frame}{\scshape Motivation}
+  "How does energy (entropy) deposition scale in a relativistic nuclear collision as a function of nuclear overlap density?" \\[0.1\textheight]
+
+  "Do hydrodynamic simulations---using appropriately constructed energy profiles---provide quantitative descriptions of relativistic nuclear collisions?"
+\end{frame}
+
+\begin{frame}{\scshape Outline}
+  \begin{itemize}
+    \item Parametric initial conditions \\[3ex]
+    \item Bayesian parameter estimation \\[3ex]
+    \item Proof of concept in A+A collisions \\[3ex]
+    \item Adding nucleon substructure \\[3ex]
+    \item Ongoing work to constrain IC
+  \end{itemize} 
+\end{frame}
+
+\begin{frame}[t]{\scshape Sampling nuclei}
+  \begin{tikzpicture}[remember picture, overlay]
+    \only<1>{\lead{lead_1}}
+    \only<2>{\lead{lead_2}}
+    \only<3>{\lead{lead_3}}
+    \only<4>{\lead{lead_10}}
+    \only<5>{\lead{lead_50}}
+    \only<6>{\lead{lead_208}}
+  \end{tikzpicture}
+
+  {\color{theme} Correlated nuclei algorithm: J.\ Bernhard} \\
+  \begin{enumerate}
+    \small
+    \item Pre-sample nucleon radii from Woods-Saxon distribution
+    \item Place nucleons in order of increasing radius
+    \item For each nucleon, sample random $\theta$ and $\phi$ \\
+    \item Resample angles if any two nucleons \\
+          are too close $|\mathbf{x}_1 - \mathbf{x}_2| < d_\mathrm{min}$
+  \end{enumerate}
 \end{frame}
 
 \section{Introduction}
