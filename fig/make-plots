@@ -1,0 +1,559 @@
+#!/usr/bin/env python3
+
+import argparse
+
+import numpy as np
+from scipy.optimize import curve_fit
+from scipy import optimize
+import matplotlib.pyplot as plt
+import matplotlib.cm as cm
+import matplotlib.ticker as tick
+from matplotlib import lines
+from matplotlib import patches
+from matplotlib import ticker
+from matplotlib.gridspec import GridSpec
+from matplotlib.colors import LinearSegmentedColormap
+from random import randint
+import husl
+import colorsys
+import h5py
+import functools
+import glob
+import sys
+
+aspect = 1/1.618
+resolution = 72.27
+paperwidth = 364.19536/resolution
+paperheight = 273.14662/resolution
+textwidth = 307.28987/resolution
+textheight = 261.69864/resolution
+columnwidth = 0.5*textwidth
+textiny, texsmall, texnormal = 5.6, 6.475, 7.0
+offblack = '#262626'
+grey = '0.8'
+outer_band = dict(color='.92')
+inner_band = dict(color=plt.cm.Blues(.32))
+inner_line = dict(color=plt.cm.Blues(.77))
+
+plt.rcdefaults()
+plt.rcParams.update({
+    'font.family': 'sans serif',
+    'font.sans-serif': ['Lato'],
+    'mathtext.fontset': 'custom',
+    'mathtext.default': 'it',
+    'mathtext.rm': 'sans',
+    'mathtext.it': 'sans:italic:medium',
+    'mathtext.cal': 'sans', 
+    'font.size': texsmall,
+    'legend.fontsize': texsmall,
+    'axes.labelsize': texsmall,
+    'axes.titlesize': texsmall,
+    'xtick.labelsize': textiny,
+    'ytick.labelsize': textiny,
+    'font.weight': 400,
+    'axes.labelweight': 400,
+    'axes.titleweight': 400,
+    'lines.linewidth': .6,
+    'lines.markersize': 2,
+    'lines.markeredgewidth': .1,
+    'patch.linewidth': .6,
+    'axes.linewidth': .4,
+    'xtick.major.width': .4,
+    'ytick.major.width': .4,
+    'xtick.minor.width': .4,
+    'ytick.minor.width': .4,
+    'xtick.major.size': 1,
+    'ytick.major.size': 1,
+    'xtick.minor.size': 0.6,
+    'ytick.minor.size': 0.6,
+    'xtick.major.pad': 1.8,
+    'ytick.major.pad': 1.8,
+    'text.color': offblack,
+    'axes.edgecolor': offblack,
+    'axes.labelcolor': offblack,
+    'xtick.color': offblack,
+    'ytick.color': offblack,
+    'legend.numpoints': 1,
+    'legend.scatterpoints': 1,
+    'legend.frameon': False,
+    'image.interpolation': 'none',
+    'pdf.fonttype': 3,
+})
+
+plot_functions = {}
+
+def plot(f):
+    def wrapper(*args, **kwargs):
+        print(f.__name__)
+        f(*args, **kwargs)
+        plt.savefig('{}.pdf'.format(f.__name__))
+        plt.close()
+
+    plot_functions[f.__name__] = wrapper
+
+    return wrapper
+
+
+def finish(despine=True, remove_ticks=False, pad=0.1, h_pad=None, w_pad=None,
+           rect=[0, 0, 1, 1]):
+    fig = plt.gcf()
+
+    for ax in fig.axes:
+        if despine:
+            for spine in 'top', 'right':
+                ax.spines[spine].set_visible(False)
+
+        if remove_ticks:
+            for ax_name in 'xaxis', 'yaxis':
+                getattr(ax, ax_name).set_ticks_position('none')
+        else:
+            ax.xaxis.set_ticks_position('bottom')
+            ax.yaxis.set_ticks_position('left')
+
+    fig.tight_layout(pad=pad, h_pad=h_pad, w_pad=w_pad, rect=rect)
+
+
+def set_loc(ax, xy=None, nbins=5, steps=[1, 2, 3, 4, 10],
+            prune=None, minor=0):
+    if xy == 'x':
+        axes = ax.xaxis,
+    elif xy == 'y':
+        axes = ax.yaxis,
+    else:
+        axes = ax.xaxis, ax.yaxis
+
+    for axis in axes:
+        axis.set_major_locator(
+            tick.MaxNLocator(nbins=nbins, steps=steps, prune=prune)
+        )
+        if minor:
+            axis.set_minor_locator(tick.AutoMinorLocator(minor))
+
+
+def fmt_tick(n):
+    s = str(float(n))
+    if abs(n) > 10 and s.endswith('.0'):
+        return s[:-2]
+    return s
+
+
+def desaturate(color, fraction=0.5):
+    h, l, s = colorsys.rgb_to_hls(*color[:3])
+    return colorsys.hls_to_rgb(h, l, fraction*s)
+
+
+TRENTO_LABEL = r'T\raisebox{-.5ex}{R}ENTo'
+
+
+def set_trento_label(legend, i):
+    """
+    Mark the `i`th label of a legend as containing the T_RENTo logo.
+
+    """
+    t = legend.get_texts()[i]
+    t.set_usetex(True)
+    t.set_y(-.18*t.get_size())
+    return legend
+
+
+def gen_mean(x, y, p):
+    #x, y = npart(x, y, 6.4)
+    if abs(p) < 1e-9:
+        return np.sqrt(x * y)
+    else:
+        return (((x + 1e-12)**p + (y + 1e-12)**p)/2)**(1/p)
+
+
+def kln(x, y):
+    #x, y = npart(x, y, 6.4)
+    Qs2_min = np.minimum(x, y)
+    Qs2_max = np.maximum(x, y)
+    arg = Qs2_max/(Qs2_min + 1e-12)
+    return Qs2_min*(2 + np.log(arg + 1e-12))/2
+
+
+def ekrt_gen():
+    K, beta, pmin = 0.64, 0.8, 1.
+
+    a = (-0.0044020 + 0.0220154*K - 0.0005974*beta
+         + 0.0125320*K*beta - 0.0032844*beta**2 - 0.0033841*K**2)
+    b = (0.8537670 - 0.0580163*K + 0.0957157*beta
+         - 0.0016413*K*beta - 0.1788390*beta**2 + 0.0220187*K**2)
+    C = (3.9027590 - 0.6277216*K + 1.0703962*beta
+         + 0.0692793*K*beta - 1.9808449*beta**2 + 0.1106879*K**2)
+    n = (0.1312476 - 0.0157637*K - 0.0362980*beta
+         - 0.0022506*K*beta + 0.0615129*beta**2 + 0.0052116*K**2)
+
+    def inner(x, y):
+        psat = np.array(C*(a + x*y)**n - b*C*a**n)
+        e0 = (K/np.pi) * psat**3
+        s0 = e0**(3/4)
+        return s0
+
+    return inner
+
+ekrt = ekrt_gen()
+
+def wn(x, y):
+    sigma = 6.4
+    NA = x*(1 - np.exp(-sigma*y))
+    NB = y*(1 - np.exp(-sigma*x))
+    return (NA + NB)/2
+
+def pfit(model):
+
+    def func(T, p, norm):
+        TA, TB = T
+        return norm*np.ravel(gen_mean(TA, TB, p))
+
+    T = np.linspace(0, 4, 100)
+    TA, TB = np.meshgrid(T, T)
+
+    popt, pcov = curve_fit(func, np.meshgrid(T, T), np.ravel(model(TA, TB)))
+    p, norm = popt
+
+    return [round(p, 2), round(norm, 5)]
+
+
+def fobj(T, NA, NB, sigma):
+    P1 = T[0]*(1 - np.exp(-sigma*T[1])) - NA
+    P2 = T[1]*(1 - np.exp(-sigma*T[0])) - NB
+    return P1**2 + P2**2
+
+
+def thick(NA, NB, sigma):
+    return optimize.minimize(fobj, [NA, NB], args=(NA, NB, sigma)).x
+
+def npart(TA, TB, sigma):
+    return [TA*(1 - np.exp(-sigma*TB)), TB*(1 - np.exp(-sigma*TA))]
+
+@plot
+def cgc_compare():
+    fig, axes = plt.subplots(
+        nrows=3, figsize=(0.4*textwidth, 0.88*textheight), sharex=True
+    )
+
+    labels = ['WN', 'EKRT', 'KLN']
+    functions = [lambda x, y: (x + y)/2, ekrt, kln]
+    pvals = [[1, 1], [0, 1.09], pfit(kln)]
+    TB = [1, 2, 3]
+
+    for ax, (p, norm), func, label in zip(axes, pvals, functions, labels):
+        X = np.linspace(0, 4, 1000)
+        for Y in TB:
+            ax.plot(X, norm*gen_mean(X, Y, p), lw=0.6, color=plt.cm.Blues(0.6),
+                 label='Gen. mean, $p={}$'.format(p) if Y == 1 else '')
+
+            ax.plot(X, func(X, Y), lw=0.6, dashes=(4, 3),
+                 color='0.25', label=label if Y == 1 else '')
+
+        offsets = [2.2, 2.8, 3.4]
+        labels = ['${:d}$', '${:d}$', r'$T_B={}$']
+
+        if ax == axes[0]:
+            [ax.text(4, func(4, Y) + 0.05, label.format(int(Y)) + ' fm$^{-2}$',
+                     ha='right', va='baseline', rotation=18)
+             for Y, offset, label in zip(TB, offsets, labels)]
+
+        ax.set_xlim(0, 4)
+        ax.set_xticks([0, 1, 2, 3, 4])
+        ax.set_ylim(0, 4)
+        ax.set_yticks([0, 1, 2, 3])
+
+        handles, labels = ax.get_legend_handles_labels()
+        ax.legend(handles, labels, bbox_to_anchor=(-.01, 1.05),
+                  loc=2, handlelength=1.2, handletextpad=.6)
+
+        ax.set_ylabel(r'Entropy density [fm$^{-3}$]')
+    axes[2].set_xlabel(r'Participant thickness $T_A$ [fm$^{-2}$]')
+
+    finish(pad=0)
+
+def thickness(p=None):
+    plt.figure(figsize=(columnwidth, aspect*columnwidth))
+
+    X = np.linspace(-9, 9, 340)
+    TA = np.loadtxt('data/thickness/PbPb_TA.dat')[170,:]
+    TB = np.loadtxt('data/thickness/PbPb_TB.dat')[170,:]
+    Tmin = np.minimum(TA, TB)
+    Tmax = np.maximum(TA, TB)
+
+    blue = plt.cm.Blues(0.6)
+    dark_blue = plt.cm.Blues(0.7)
+    dark_red = plt.cm.Reds(0.6)
+
+    plt.fill_between(X, Tmin, Tmax, lw=0, color='0.8', zorder=0,
+                     label=r'$T_\mathrm{min} < T < T_\mathrm{max}$')
+    plt.fill_between(X, gen_mean(TA, TB, -1), gen_mean(TA, TB, 1),
+                     color=blue, lw=0, zorder=1, label=r'$-1<p<1$')
+    if p is not None:
+        plt.plot(X, gen_mean(TA, TB, p), color=dark_red, label='$p={}$'.format(p))
+
+    plt.xlim(-8.5, 8.5)
+    plt.xticks(np.linspace(-8, 8, 9))
+    plt.xlabel(r'$x$ [fm]')
+    plt.ylim(0, 4)
+    plt.yticks([0, 2, 4])
+    plt.ylabel(r'Thickness [fm$^{-2}$]')
+
+    handles, labels = plt.gca().get_legend_handles_labels()
+    if p is not None:
+        handles = handles[1], handles[2], handles[0]
+        labels = labels[1], labels[2], labels[0]
+
+    plt.legend(handles, labels, labelspacing=0.4,
+               handletextpad=0.4, markerfirst=False,
+               bbox_to_anchor=(1.03, 1.05))
+    plt.annotate('Pb+Pb 2.76 TeV', xy=(0.02, 0.985), va='top', color=offblack,
+                 xycoords='axes fraction')
+
+    finish()
+
+@plot
+def thickness_band():
+    thickness()
+
+@plot
+def thickness_arithmetic():
+    thickness(p=1)
+
+@plot
+def thickness_geometric():
+    thickness(p=0)
+
+@plot
+def thickness_harmonic():
+    thickness(p=-1)
+
+def split_cent_bins(array, bin_edges):
+    """
+    Split an array into chunks for each centrality bin. The
+    array must already be sorted by centrality along its first axis.
+
+    """
+    for a, b in zip(bin_edges[:-1], bin_edges[1:]):
+        i, j = (int(array.shape[0]*c/100) for c in (a, b))
+        yield array[i:j]
+
+
+@plot
+def nch_per_npart():
+    plt.figure(figsize=(columnwidth, 1.1*aspect*columnwidth))
+
+    ax = plt.axes()
+
+    handles = {}
+
+    for exp, energy, cmap in [
+            ('phenix', 130, 'Greens'),
+            ('phenix', 200, 'Purples'),
+            ('alice', 2760, 'Oranges'),
+            ('alice', 5020, 'Blues'),
+    ]:
+        cent_low, cent_high, exp_nch, exp_err = np.loadtxt(
+            'data/nch_per_npart/{}-{}.dat'.format(exp, energy),
+            usecols=range(4), unpack=True
+        )
+        cent_edges = np.append(cent_low, cent_high[-1])
+
+        trento_npart_nch = np.loadtxt(
+            'data/nch_per_npart/trento-{}.dat'.format(energy),
+            usecols=[2, 3]
+        )
+
+        trento_npart, trento_nch = np.array([
+            b.mean(axis=0) for b in
+            split_cent_bins(
+                trento_npart_nch[trento_npart_nch[:, 1].argsort()[::-1]],
+                cent_edges
+            )
+        ]).T
+
+        npart2 = trento_npart/2
+        norm = np.median(exp_nch/trento_nch)
+        if energy == 5020:
+            norm_5020 = norm
+
+        ax.plot(
+            trento_npart, norm*trento_nch/npart2,
+            color=getattr(plt.cm, cmap)(0.6), zorder=10
+        )
+
+        if exp == 'phenix':
+            key = 'AuAu'
+            fmt = 'D'
+            ms = 2.5
+        else:
+            key = 'PbPb'
+            fmt = 'o'
+            ms = 3
+
+        handles[key] = ax.errorbar(
+            trento_npart, exp_nch/npart2, yerr=exp_err/npart2,
+            color=offblack, fmt=fmt, capsize=0, mew=0, zorder=20
+        )
+
+    npart, nch = np.loadtxt(
+        'data/nch_per_npart/trento-5020-pPb.dat',
+        usecols=(2, 3), unpack=True
+    )
+    npart2 = npart.mean()/2
+
+    x_pPb = -20
+    ax.plot(
+        x_pPb + 7*np.array([-1, 1]),
+        np.full(2, norm_5020*nch.mean()/(npart.mean()/2)),
+        color=plt.cm.Blues(0.6), zorder=10
+    )
+
+    # https://inspirehep.net/record/1190545
+    alice_pPb_nch_mean = 16.81
+    alice_pPb_nch_err = 0.71
+
+    handles['pPb'] = ax.errorbar(
+        x_pPb, alice_pPb_nch_mean/npart2, yerr=alice_pPb_nch_err/npart2,
+        color=offblack, fmt='s', capsize=0, mew=0, zorder=20
+    )
+    ax.text(x_pPb + 3, alice_pPb_nch_mean/npart2 - .4, 'p+Pb',
+            ha='center', va='top', fontsize=textiny)
+
+    ax.set_xlim(2*x_pPb - 5, 420)
+    ax.set_ylim(0, 12.8)
+
+    ax.set_xlabel(r'$N_\mathrm{part}$')
+    ax.set_ylabel(r'$(dN_\mathrm{ch}/d\eta) / (N_\mathrm{part} / 2)$')
+
+    ax.legend(
+        *zip(*[
+            (handles['PbPb'], 'Pb+Pb 2.76, 5.02 TeV'),
+            (handles['pPb'], 'p+Pb 5.02 TeV'),
+            (handles['AuAu'], 'Au+Au 130, 200 GeV'),
+            (lines.Line2D([], [], color=offblack), 'TRENTO'),
+        ]),
+        loc='upper left', bbox_to_anchor=[0, 1.04],
+        handlelength=.9
+    )
+
+    for x, y, label in [
+            (300, 10.05, '5.02 TeV'),
+            (300,  6.65, '2.76 TeV'),
+            (280,  4.10, '200 GeV'),
+            (280,  2.22, '130 GeV'),
+    ]:
+        ax.text(x, y, label, fontsize=textiny)
+
+    finish(pad=0)
+
+
+def nucleus(offset=0, participants=True, spectators=True,
+            thickness=False, profile=False):
+    fig = plt.figure(figsize=(textwidth, columnwidth))
+
+    # load collision data
+    nucl = np.loadtxt("data/trento/participants.dat")
+    nuclA, nuclB = nucl[:208], nucl[208:]
+    specA = nuclA[nuclA[:, 3] == 0][:,:2] + (offset/2, 0)
+    partA = nuclA[nuclA[:, 3] == 1][:,:2] + (offset/2, 0)
+    specB = nuclB[nuclB[:, 3] == 0][:,:2] - (offset/2, 0)
+    partB = nuclB[nuclB[:, 3] == 1][:,:2] - (offset/2, 0)
+
+    nuclei = (specA, partA), (specB, partB)
+    colors = plt.cm.Blues(.5), plt.cm.Oranges(.5)
+
+    # load collision data
+    for (spec, part), color in zip(nuclei, colors):
+        plt.scatter(
+            *spec.T, s=80, facecolors=color if spectators else 'none',
+            lw=0.2, edgecolors = offblack, zorder=1
+        )
+        if profile:
+            continue
+        plt.scatter(
+            *part.T, s=80, facecolors=color if participants else 'none',
+            lw=0.2, edgecolors = offblack, alpha=0.6 if thickness else 1,
+            zorder=1
+        )
+
+    TA = np.loadtxt("data/trento/TA.dat")
+    TB = np.loadtxt("data/trento/TB.dat")
+    TR = np.loadtxt("data/trento/TR.dat")
+    cmaps = plt.cm.Blues, plt.cm.Oranges
+    extent = (-8.5, 8.5, -8.5, 8.5)
+    shifts = (offset/2, -offset/2)
+
+    if profile:
+        cmap = plt.cm.hot_r
+        cmap.set_under('white')
+        plt.imshow(TR, cmap=cmap, origin='bottom', vmin=0.2,
+                   extent=(-8.5, 8.5, -8.5, 8.5))
+    elif thickness:
+        for T, cmap, shift in zip([TA, TB], cmaps, shifts):
+            cmap.set_under('white')
+            plt.imshow(T, cmap=cmap, origin='bottom', vmin=0.2, vmax=2.5,
+                    extent=(-8.5 + shift, 8.5 + shift, -8.5, 8.5))
+    
+    ax = plt.gca()
+    ax.set_aspect('equal')
+    plt.axis('off')
+    plt.xlim(-20, 20)
+    plt.ylim(-10, 10)
+    finish()
+
+@plot
+def nucl():
+    nucleus()
+
+@plot
+def nucl_offset():
+    nucleus(offset=15)
+
+@plot
+def part():
+    nucleus(spectators=False)
+
+@plot
+def part_offset():
+    nucleus(
+        offset=15,
+        spectators=False
+    )
+
+@plot
+def thick():
+    nucleus(
+        offset=15,
+        spectators=False,
+        participants=False,
+        thickness=True
+    )
+
+@plot
+def entropy():
+    nucleus(
+        spectators=False,
+        participants=False,
+        thickness=True,
+        profile=True
+    )
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('plots', nargs='*')
+    args = parser.parse_args()
+
+    if args.plots:
+        for i in args.plots:
+            if i.endswith('.pdf'):
+                i = i[:-4]
+            if i in plot_functions:
+                plot_functions[i]()
+            else:
+                print('unknown plot:', i)
+    else:
+        for f in plot_functions.values():
+            f()
+
+
+if __name__ == "__main__":
+    main()
