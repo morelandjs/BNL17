@@ -444,6 +444,53 @@ def nch_per_npart():
 
     finish(pad=0)
 
+pmean_cmaps = {1: plt.cm.Greens, 0: plt.cm.Blues, -1: plt.cm.Oranges}
+
+pmean_labels = {
+    p: '{}: $p = {}$'.format(name, p) for (p, name) in (
+        (1, 'Arithmetic'),
+        (0, 'Geometric'),
+        (-1, 'Harmonic')
+    )
+}
+
+@plot
+def reduced_thickness():
+    fig = plt.figure(figsize=(.6*textwidth, .6*textwidth*aspect))
+    ax = fig.gca()
+
+    def gaussian(x, sigma):
+        return np.exp(-.5*x*x/(sigma*sigma))
+
+    X = np.linspace(-2.2, 2.2, 1000)
+
+    width = 0.6
+    b = width
+    A = gaussian(X - b, width)
+    B = gaussian(X + b, width)
+
+    means = (
+        ((A+B)/2, 1),
+        (np.sqrt(A*B), 0),
+        (2*A*B/(A+B), -1)
+    )
+
+    for M, p in means:
+        plt.plot(X, M, color=pmean_cmaps[p](0.7), label=pmean_labels[p])
+
+    norm = 0.3
+    kwargs = dict(lw=.6, dashes=(4, 2), color='.4', zorder=-1)
+    ax.plot(X, norm*A, **kwargs)
+    ax.plot(X, norm*B, label=r'Participant$\times$ {}'.format(norm), **kwargs)
+
+    ax.set_xlim(X.min(), X.max())
+    ax.set_ylim(0, 1.05)
+
+    ax.set_xlabel('$x$ [fm]')
+    ax.set_ylabel('Thickness [fm$^{-2}$]')
+
+    plt.legend(loc=(.02, .55), handlelength=1.5)
+    finish()
 
 def nucleus(offset=0, participants=True, spectators=True,
             thickness=False, profile=False):

@@ -89,6 +89,13 @@
 % macros
 \newcommand{\trento}{T\raisebox{-0.3ex}{R}ENTo}
 
+\newcommand{\fullwidth}[1]{
+  \begin{columns}
+    \column{\paperwidth}
+    #1
+  \end{columns}
+}
+
 % tikz grid overlay
 \newcommand{\grid}{
   \begin{tikzpicture}[remember picture, overlay]
@@ -109,8 +116,7 @@
 \newcommand{\tran}{^\intercal}
 \newcommand{\T}{\tilde{T}}
 
-%\title[Nucleon substructure]{Probing nucleon substructure with Bayesian parameter estimation}
-\title[]{Applying Bayesian methodology to study particle production and nucleon structure in relativistic nuclear collisions}
+\title[Nucleon substructure]{Probing nucleon substructure with Bayesian parameter estimation}
 \author[J.\ S.\ Moreland]{J.\ S.\ Moreland,\, J.\ E.\ Bernhard,\, W.\ Ke,\, S.\ A.\ Bass}
 \institute[Duke U.]{Duke Univerity}
 \date{\today}
@@ -606,33 +612,33 @@
 
 \newcommand{\boxtitle}[1]{\textbf{#1}\\[.5ex]}
 
-\begin{frame}{Bayesian parameter estimation}
+\begin{frame}{Overview: Bayesian parameter estimation}
   \vspace{1em}
   \makebox[\textwidth]{
   \begin{tikzpicture}
-    \node[box=3] (input) at (4.5, 6) {
+    \node[box=1] (input) at (4.5, 6) {
       \boxtitle{Input parameters}
       QGP properties
     };
-    \node[box=2] (model) at (8, 4) {
+    \node[box=1] (model) at (8, 4) {
       \boxtitle{Model}
       heavy-ion collision \\
       spacetime evolution
     };
-    \node[box=4] (gp) at (1.5, 4) {
+    \node[box=1] (gp) at (1.5, 4) {
       \boxtitle{Gaussian process emulator}
       surrogate model
     };
-    \node[box=4] (mcmc) at (3.5, 2) {
+    \node[box=1] (mcmc) at (3.5, 2) {
       \boxtitle{MCMC}
       calibrate model to data
     };
-    \node[box=5] (posterior) at (8, .5) {
+    \node[box=1] (posterior) at (8, .5) {
       \boxtitle{Posterior distribution}
       quantitative estimates \\
       of each parameter
     };
-    \node[box=3] (exp) at (.5, .3) {
+    \node[box=1] (exp) at (.5, .3) {
       \boxtitle{Experimental data}
       LHC Pb-Pb collisions
     };
@@ -834,10 +840,52 @@
   \end{tcolorbox}
 \end{frame}
 
-\begin{frame}{What's the best the model can do?}
+
+\begin{frame}[plain,t]
+  \fullwidth{
+    \centering
+    \includegraphics{observables_map}
+  }
+  \bigskip
+  \scriptsize
+  \setbeamercolor{lightbg}{bg=theme!10!white}
+  \begin{beamercolorbox}[sep=1ex]{lightbg}
+    \trento\ $p = 0$
+    \hfill
+    $\sigma_\text{fluct} = 1$
+    \hfill
+    $w = 0.9$ fm
+    \hfill
+    $\tau_\text{fs} = 0.6$ fm/$c$
+    \hfill
+    $T_\text{switch} = 150$ MeV
+    \\[1ex]
+    $\eta/s$ min = 0.06, \enskip slope = 2.2 GeV$^{-1}$, \enskip crv = $-0.4$
+    \hfill
+  $\zeta/s$ max = 0.015, \enskip width = 0.01 GeV
+  \end{beamercolorbox}
 \end{frame}
 
+
 \begin{frame}{What does the model predict for a p+p collision?}
+  \vspace{.06\textheight}
+  \begin{figure}[t]
+    \definecolor{offblack}{HTML}{262626}
+    \begin{tikzpicture}[
+        scale=.5,
+        color=offblack,
+        greydash/.style={line width=0.6, dash pattern=on 5pt off 3pt, color=black!60!white}
+      ]
+      \def\r{1.5};
+      \node (fig) {\includegraphics[width=0.9\textwidth]{reduced_thickness}};
+      \coordinate (a) at (5.2, 3.0);
+      \coordinate (b) at ($(a) + (\r, 0)$);
+      \node at ($(a)!0.5!(b) + (0, 1.4*\r)$) {\small Beam view};
+      \draw[greydash] (a) circle (\r);
+      \draw[greydash] (b) circle (\r);
+      \draw[->, semithick] (a) -- node[above] {$\small x$} (b);
+    \end{tikzpicture}
+  \end{figure}
 \end{frame}
 
 \begin{frame}[plain]{Nucleon substructure---a new degree of freedom}
