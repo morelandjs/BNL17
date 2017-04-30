@@ -65,6 +65,8 @@
 \usepackage[absolute]{textpos}
 \usepackage{tcolorbox}
 
+\usepackage{fontawesome}
+
 \usepackage{tikz}
 \usepackage{tikzscale}
 \usetikzlibrary{calc}
@@ -844,11 +846,13 @@
 \begin{frame}[plain,t]
   \fullwidth{
     \centering
-    \includegraphics{observables_map}
+    \includegraphics<1>[width=.95\paperwidth]{observables_map.png}
+    \includegraphics<2>[width=.95\paperwidth]{observables_map.pdf}
   }
   \bigskip
   \scriptsize
   \setbeamercolor{lightbg}{bg=theme!10!white}
+  \only<2>{
   \begin{beamercolorbox}[sep=1ex]{lightbg}
     \trento\ $p = 0$
     \hfill
@@ -862,12 +866,75 @@
     \\[1ex]
     $\eta/s$ min = 0.06, \enskip slope = 2.2 GeV$^{-1}$, \enskip crv = $-0.4$
     \hfill
-  $\zeta/s$ max = 0.015, \enskip width = 0.01 GeV
+    $\zeta/s$ max = 0.015, \enskip width = 0.01 GeV
   \end{beamercolorbox}
+  }
+  \only<1>{
+    \begin{tikzpicture}[remember picture, overlay]
+      \node at ([yshift=2em]current page.center) {
+        \begin{tcolorbox}[colback=theme!20!offblack, colframe=theme, boxrule=0pt, opacityframe=.8, opacityback=.8]
+          \centering
+          \LARGE\color{white} What's the best the model can do?
+        \end{tcolorbox}
+      };
+    \end{tikzpicture}
+  }
 \end{frame}
 
 
-\begin{frame}{What does the model predict for a p+p collision?}
+\begin{frame}{Checking non-calibrated flow observables}
+  Correlations between event-by-event fluctuations of the magnitudes of flow harmonics m and n:
+  \begin{equation*}
+    \text{SC}(m, n) = \langle v_m^2 v_n^2 \rangle - \langle v_m^2 \rangle \langle v_n^2 \rangle 
+  \end{equation*}
+    \includegraphics{flow_corr} \\[1ex]
+    \hfill \tiny Data: ALICE, PRL 117 182301 [1604.07663]
+\end{frame}
+
+\begin{frame}[plain]{Agreement: success of saturation models + hydro}
+  \centering
+  \medskip
+  \scriptsize Hydro models with saturation IC, e.g.\ \trento, IP-Glasma and EKRT,\\
+  provide excellent description of bulk observables in A+A collisions \\[1ex]
+  \includegraphics[width=.8\textwidth]{mode_observables} \\[1ex]
+  \begin{textblock*}{0.3\textwidth}(9.5 cm, 2.0 cm)
+    \rotatebox{-90}{\tiny PRC 94, 024907 [1605.03954]}
+  \end{textblock*}
+  \begin{columns}
+    \begin{column}{.075\textwidth}
+    \end{column}
+    \begin{column}{.45\textwidth}
+      \centering
+      \includegraphics[width=\columnwidth]{vn_ipglasma.eps} \\
+      {\tiny PRL 113, 102301 [1405.3605]}
+    \end{column}
+    \begin{column}{.4\textwidth}
+      \centering
+      \includegraphics[width=.91\columnwidth]{vn_ekrt} \\
+      {\tiny PRC 93, 024907 [1505.02677]}
+    \end{column}
+    \begin{column}{.075\textwidth}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Agreement validates IC output, not narrative!}
+  \begin{itemize}
+  \large
+  \item[\faicon{question-circle-o}] How do we proceed if two models with different narratives predict similar initial conditions?\\[2ex] 
+  \item[\faicon{wrench}] How can we disambiguate model scaling behavior and the underlying theoretical framework?
+  \end{itemize}
+  \begin{center}
+    These questions aside: there is strong evidence that saturation-\emph{like} effects govern particle production in relativistic nuclear collisions and their magnitude is well constrained.\\[2ex]
+    This work:\quad $\dfrac{dS}{dy}\Big\vert_{y=0} \approx \sqrt{\rho_A \,\rho_B}$\\[2ex]
+    \emph{Purely observational inference! Need not be exact,\\but robust to moderate perturbations.}
+  \end{center}
+\end{frame}
+
+\begin{frame}{New theory challenge: collectivity in small systems}
+\end{frame}
+
+\begin{frame}{Saturation effects manifest in p+p overlap geometry}
   \vspace{.06\textheight}
   \begin{figure}[t]
     \definecolor{offblack}{HTML}{262626}
@@ -886,6 +953,22 @@
       \draw[->, semithick] (a) -- node[above] {$\small x$} (b);
     \end{tikzpicture}
   \end{figure}
+\end{frame}
+
+\begin{frame}[t]{\trento\ model with nucleon substructure}
+  \bigskip
+  \begin{columns}
+    \begin{column}{.5\textwidth}
+      \centering
+      Nucleon degrees of freedom
+    \end{column}
+    \vline
+    \begin{column}{.5\textwidth}
+      \centering
+      Parton degrees of freedom
+    \end{column}
+  \end{columns}
+
 \end{frame}
 
 \begin{frame}[plain]{Nucleon substructure---a new degree of freedom}
@@ -911,6 +994,15 @@
       \end{flushleft}
     \end{column}
   \end{columns}
+\end{frame}
+
+\begin{frame}
+  \begin{itemize}
+    \Large
+    \item[\LARGE \textcolor{pyred}{\faicon{warning}} \,] Disclaimer, hydrodynamic description may not be suitable for small collision systems!
+      \bigskip
+    \item[\LARGE \textcolor{pyblue}{\faicon{commenting-o}} \,] Temporarily defer applicability questions to explore feasibility---would hydro ``even work''?
+  \end{itemize}
 \end{frame}
 
 \section{Introduction}
