@@ -584,6 +584,80 @@ def entropy():
     )
 
 
+@plot
+def pp_part():
+    fig = plt.figure(figsize=(columnwidth, aspect*columnwidth))
+    ax = plt.gca()
+
+    # load collision data
+    nuclei = (.5, 0), (-.5, 0)
+    colors = plt.cm.Blues(.5), plt.cm.Oranges(.5)
+
+    # load collision data
+    for pos, color in zip(nuclei, colors):
+        proton= plt.Circle(pos, 1, facecolor=color, lw=0.4, edgecolor=offblack)
+        ax.add_artist(proton)
+
+    ax.set_aspect('equal')
+    ax.axis('off')
+
+    xmax = 3
+    ymax = aspect*xmax
+    plt.xlim(-xmax, xmax)
+    plt.ylim(-ymax, ymax)
+    finish()
+
+
+@plot
+def pp_part_offset():
+    fig = plt.figure(figsize=(columnwidth, aspect*columnwidth))
+    ax = plt.gca()
+
+    # load collision data
+    nuclei = (1.5, 0), (-1.5, 0)
+    colors = plt.cm.Blues(.5), plt.cm.Oranges(.5)
+
+    # load collision data
+    for pos, color in zip(nuclei, colors):
+        proton= plt.Circle(pos, 1, facecolor=color, lw=0.4, edgecolor=offblack)
+        ax.add_artist(proton)
+
+
+    ax.set_aspect('equal')
+    ax.axis('off')
+
+    xmax = 3
+    ymax = aspect*xmax
+    plt.xlim(-xmax, xmax)
+    plt.ylim(-ymax, ymax)
+    finish()
+
+
+@plot
+def pp_thick():
+    fig = plt.figure(figsize=(columnwidth, aspect*columnwidth))
+    ax = plt.gca()
+
+    # load collision data
+    nuclei = (1.5, 0), (-1.5, 0)
+    colors = plt.cm.Blues, plt.cm.Oranges
+
+    xmax = 3
+    ymax = aspect*xmax
+
+    # load collision data
+    for pos, color in zip(nuclei, colors):
+        T = np.exp(-(xx**2 + yy**2)/(2*width**2))
+        plt.imshow(T, extent=(-xymax, xymax, -ymax, ymax), cmap=color)
+
+    ax.set_aspect('equal')
+    ax.axis('off')
+
+    plt.xlim(-xmax, xmax)
+    plt.ylim(-ymax, ymax)
+    finish()
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('plots', nargs='*')
