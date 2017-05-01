@@ -585,271 +585,196 @@ def entropy():
     )
 
 
-def pp(fname, color, mode='scatter'):
-    fig = plt.figure(figsize=(columnwidth, columnwidth))
+def pp_participants(parton_toggle=False):
+    fig = plt.figure(figsize=(columnwidth, aspect*columnwidth))
     ax = plt.gca()
 
-    if color == 'orange':
-        cmap = plt.cm.Oranges
-        color = plt.cm.Oranges(.5)
-    elif color == 'blue':
-        cmap = plt.cm.Blues
-        color = plt.cm.Blues(.5)
-    else:
-        print('no such color')
-    
+    # load collision data
+    positions = (1.5, 0), (-1.5, 0)
+    colors = plt.cm.Blues(.5), plt.cm.Oranges(.5)
+
+    partons_right = [(0.2, 0.346), (0.2, -0.346), (-.4, 0)]
+    partons_left = [(0, 0.4), (0.346, -0.2), (-0.346, -0.2)]
+    parton_list = partons_left, partons_right
+
+    # load collision data
+    for x, partons, color in zip(positions, parton_list, colors):
+        if parton_toggle:
+            for dx in partons:
+                pos = tuple(map(operator.add, x, dx))
+                p = plt.Circle(pos, 0.6, facecolor=color, lw=0.4, alpha=.6, edgecolor=offblack)
+                ax.add_artist(p)
+        else:
+            p = plt.Circle(x, 1, facecolor=color, lw=0.4, alpha=.6, edgecolor=offblack)
+            ax.add_artist(p)
+
     ax.set_aspect('equal')
     ax.axis('off')
 
-    if mode == 'scatter':
-        proton = plt.Circle((0, 0), .75, fc=color, ec=offblack, lw=2, alpha=.6)
-        ax.add_artist(proton)
-    elif mode == 'imshow':
-        l = np.linspace(-1.2, 1.2, 200)
-        xx, yy = np.meshgrid(l, l)
-        width = 0.5
-        proton = np.exp(-(xx**2 + yy**2)/(2*width**2))
-        proton_masked = np.ma.masked_where(proton < 0.2, proton)
-        plt.imshow(proton_masked, extent=(-1.2, 1.2, -1.2, 1.2), cmap=cmap, vmin=0.2,
-                   alpha=.8)
+    xmax = 3
+    ymax = aspect*xmax
+    plt.xlim(-xmax, xmax)
+    plt.ylim(-ymax, ymax)
+    finish()
 
-    plt.xlim(-1.2, 1.2)
-    plt.ylim(-1.2, 1.2)
-    plt.savefig(fname, dpi=1000, transparent=True)
 
 @plot
-def pa_circle():
-    pp('pa_circle.png', 'orange')
+def pp_part():
+    pp_participants()
+
 
 @plot
-def pa_thick():
-    pp('pa_thick.png', 'orange',  mode='imshow')
+def pp_part_partons():
+    pp_participants(parton_toggle=True)
 
-@plot
-def pb_circle():
-    pp('pb_circle.png', 'blue')
 
-@plot
-def pb_thick():
-    pp('pb_thick.png', 'blue',  mode='imshow')
-
-def qq_circle(fname, color, positions):
-    fig = plt.figure(figsize=(columnwidth, columnwidth))
+def pp_thickness(partons=False):
+    fig = plt.figure(figsize=(columnwidth, aspect*columnwidth))
     ax = plt.gca()
-    
+
+    xmax = 3
+    dxy = 0.02
+    ymax = aspect*xmax
+
+    # load collision data
+    positions = 1.5, -1.5
+    colors = plt.cm.Oranges, plt.cm.Blues
+    extents = [(-xmax, 0, -ymax, ymax),
+               (0, xmax, -ymax, ymax)]
+
+    partons_left = [(0.2, 0.346), (0.2, -0.346), (-.4, 0)]
+    partons_right = [(0, 0.4), (0.346, -0.2), (-0.346, -0.2)]
+    proton = partons_left, partons_right 
+
+    lx = np.arange(-xmax/2, xmax/2, dxy)
+    ly = np.arange(-ymax, ymax, dxy)
+    xx, yy = np.meshgrid(lx, ly)
+
+    def gaussian(x0, y0, width):
+        return np.exp(-((xx - x0)**2 + (yy - y0)**2)/(2*width**2))
+
+    # load collision data
+    for pos, cmap, extent, coord in zip(positions, colors, extents, proton):
+        cmap.set_under('white')
+        if partons:
+            thickness = np.zeros_like(xx)
+            for xy in coord:
+                thickness += gaussian(*xy, 0.3)
+            plt.imshow(thickness, extent=extent, cmap=cmap, vmin=0.02,
+                       origin='lower')
+        else:
+            plt.imshow(gaussian(0, 0, 0.5), extent=extent, cmap=cmap,
+                       vmin=0.02, origin='lower')
+
     ax.set_aspect('equal')
     ax.axis('off')
 
-    for xy in positions:
-        parton = plt.Circle(xy, 0.6, fc=color, ec=offblack, lw=2, alpha=.6)
-        ax.add_artist(parton)
+    plt.xlim(-xmax, xmax)
+    plt.ylim(-ymax, ymax)
+    finish()
 
-    plt.xlim(-1.1, 1.1)
-    plt.ylim(-1.1, 1.1)
-    plt.savefig(fname, dpi=1000, transparent=True)
+def pp_overlapping(partons=False, offset=1.5):
+    fig = plt.figure(figsize=(columnwidth, aspect*columnwidth))
+    ax = plt.gca()
+
+    xmax = 3
+    dxy = 0.02
+    ymax = aspect*xmax
+
+    # load collision data
+    positions = offset, -offset
+    colors = plt.cm.Blues, plt.cm.Oranges
+
+    partons_left = [(0.2, 0.346), (0.2, -0.346), (-.4, 0)]
+    partons_right = [(0, 0.4), (0.346, -0.2), (-0.346, -0.2)]
+    proton = partons_right, partons_left
+
+    lx = np.arange(-xmax, xmax, dxy)
+    ly = np.arange(-ymax, ymax, dxy)
+    xx, yy = np.meshgrid(lx, ly)
+
+    def gaussian(x0, y0, width):
+        return np.exp(-((xx - x0)**2 + (yy - y0)**2)/(2*width**2))
+
+    # load collision data
+    for pos, cmap, coord in zip(positions, colors, proton):
+        if partons:
+            thickness = np.zeros_like(xx)
+            for xy in coord:
+                x, y = xy
+                thickness += gaussian(x + pos, y, 0.3)
+            plt.contour(thickness,  np.linspace(0.02, thickness.max(), 8),
+                        extent=(-xmax, xmax, -ymax, ymax),
+                        colors=cmap(np.linspace(0.3, 1, 8)), origin='lower')
+        else:
+            thickness = gaussian(pos, 0, 0.5)
+            plt.contour(thickness, np.linspace(0.02, thickness.max(), 8),
+                        extent=(-xmax, xmax, -ymax, ymax),
+                        colors=cmap(np.linspace(0.3, 1, 8)), origin='lower', vmin=0.5)
+
+    ax.set_aspect('equal')
+    ax.axis('off')
+
+    plt.xlim(-xmax, xmax)
+    plt.ylim(-ymax, ymax)
+    plt.savefig('cat.png', transparent=True)
+    #finish()
 
 @plot
-def qa_circle():
-    partons = [(0.2, 0.346), (0.2, -0.346), (-.4, 0)]
-    qq_circle('qa_circle.png', plt.cm.Oranges(.6), partons)
+def pp_overlap():
+    pp_overlapping(partons=False, offset=0.5)
 
 @plot
-def qb_circle():
-    partons = [(0, 0.4), (0.346, -0.2), (-0.346, -0.2)]
-    qq_circle('qb_circle.png', plt.cm.Blues(.6), partons)
+def pp_overlap_partons():
+    pp_overlapping(partons=True, offset=0.5)
+
+@plot
+def pp_overlap_offset():
+    pp_overlapping(partons=False)
+
+@plot
+def pp_overlap_partons_offset():
+    pp_overlapping(partons=True)
 
 
+@plot
+def pp_thick():
+    pp_thickness(partons=False)
 
-#def pp_participants(parton_toggle=False):
-#    fig = plt.figure(figsize=(columnwidth, aspect*columnwidth))
-#    ax = plt.gca()
-#
-#    # load collision data
-#    positions = (1.5, 0), (-1.5, 0)
-#    colors = plt.cm.Blues(.5), plt.cm.Oranges(.5)
-#
-#    partons_right = [(0.2, 0.346), (0.2, -0.346), (-.4, 0)]
-#    partons_left = [(0, 0.4), (0.346, -0.2), (-0.346, -0.2)]
-#    parton_list = partons_left, partons_right
-#
-#    # load collision data
-#    for x, partons, color in zip(positions, parton_list, colors):
-#        if parton_toggle:
-#            for dx in partons:
-#                pos = tuple(map(operator.add, x, dx))
-#                p = plt.Circle(pos, 0.6, facecolor=color, lw=0.4, alpha=.6, edgecolor=offblack)
-#                ax.add_artist(p)
-#        else:
-#            p = plt.Circle(x, 1, facecolor=color, lw=0.4, alpha=.6, edgecolor=offblack)
-#            ax.add_artist(p)
-#
-#    ax.set_aspect('equal')
-#    ax.axis('off')
-#
-#    xmax = 3
-#    ymax = aspect*xmax
-#    plt.xlim(-xmax, xmax)
-#    plt.ylim(-ymax, ymax)
-#    finish()
-#
-#
-#@plot
-#def pp_part():
-#    pp_participants()
-#
-#
-#@plot
-#def pp_part_partons():
-#    pp_participants(parton_toggle=True)
-#
-#
-#def pp_thickness(partons=False):
-#    fig = plt.figure(figsize=(columnwidth, aspect*columnwidth))
-#    ax = plt.gca()
-#
-#    xmax = 3
-#    dxy = 0.02
-#    ymax = aspect*xmax
-#
-#    # load collision data
-#    positions = 1.5, -1.5
-#    colors = plt.cm.Oranges, plt.cm.Blues
-#    extents = [(-xmax, 0, -ymax, ymax),
-#               (0, xmax, -ymax, ymax)]
-#
-#    partons_left = [(0.2, 0.346), (0.2, -0.346), (-.4, 0)]
-#    partons_right = [(0, 0.4), (0.346, -0.2), (-0.346, -0.2)]
-#    proton = partons_left, partons_right 
-#
-#    lx = np.arange(-xmax/2, xmax/2, dxy)
-#    ly = np.arange(-ymax, ymax, dxy)
-#    xx, yy = np.meshgrid(lx, ly)
-#
-#    def gaussian(x0, y0, width):
-#        return np.exp(-((xx - x0)**2 + (yy - y0)**2)/(2*width**2))
-#
-#    # load collision data
-#    for pos, cmap, extent, coord in zip(positions, colors, extents, proton):
-#        cmap.set_under('white')
-#        if partons:
-#            thickness = np.zeros_like(xx)
-#            for xy in coord:
-#                thickness += gaussian(*xy, 0.3)
-#            plt.imshow(thickness, extent=extent, cmap=cmap, vmin=0.02,
-#                       origin='lower')
-#        else:
-#            plt.imshow(gaussian(0, 0, 0.5), extent=extent, cmap=cmap,
-#                       vmin=0.02, origin='lower')
-#
-#    ax.set_aspect('equal')
-#    ax.axis('off')
-#
-#    plt.xlim(-xmax, xmax)
-#    plt.ylim(-ymax, ymax)
-#    finish()
-#
-#def pp_overlapping(partons=False, offset=1.5):
-#    fig = plt.figure(figsize=(columnwidth, aspect*columnwidth))
-#    ax = plt.gca()
-#
-#    xmax = 3
-#    dxy = 0.02
-#    ymax = aspect*xmax
-#
-#    # load collision data
-#    positions = offset, -offset
-#    colors = plt.cm.Blues, plt.cm.Oranges
-#
-#    partons_left = [(0.2, 0.346), (0.2, -0.346), (-.4, 0)]
-#    partons_right = [(0, 0.4), (0.346, -0.2), (-0.346, -0.2)]
-#    proton = partons_right, partons_left
-#
-#    lx = np.arange(-xmax, xmax, dxy)
-#    ly = np.arange(-ymax, ymax, dxy)
-#    xx, yy = np.meshgrid(lx, ly)
-#
-#    def gaussian(x0, y0, width):
-#        return np.exp(-((xx - x0)**2 + (yy - y0)**2)/(2*width**2))
-#
-#    # load collision data
-#    for pos, cmap, coord in zip(positions, colors, proton):
-#        if partons:
-#            thickness = np.zeros_like(xx)
-#            for xy in coord:
-#                x, y = xy
-#                thickness += gaussian(x + pos, y, 0.3)
-#            plt.contour(thickness,  np.linspace(0.02, thickness.max(), 8),
-#                        extent=(-xmax, xmax, -ymax, ymax),
-#                        colors=cmap(np.linspace(0.3, 1, 8)), origin='lower')
-#        else:
-#            thickness = gaussian(pos, 0, 0.5)
-#            plt.contour(thickness, np.linspace(0.02, thickness.max(), 8),
-#                        extent=(-xmax, xmax, -ymax, ymax),
-#                        colors=cmap(np.linspace(0.3, 1, 8)), origin='lower', vmin=0.5)
-#
-#    ax.set_aspect('equal')
-#    ax.axis('off')
-#
-#    plt.xlim(-xmax, xmax)
-#    plt.ylim(-ymax, ymax)
-#    plt.savefig('cat.png', transparent=True)
-#    #finish()
-#
-#@plot
-#def pp_overlap():
-#    pp_overlapping(partons=False, offset=0.5)
-#
-#@plot
-#def pp_overlap_partons():
-#    pp_overlapping(partons=True, offset=0.5)
-#
-#@plot
-#def pp_overlap_offset():
-#    pp_overlapping(partons=False)
-#
-#@plot
-#def pp_overlap_partons_offset():
-#    pp_overlapping(partons=True)
-#
-#
-#@plot
-#def pp_thick():
-#    pp_thickness(partons=False)
-#
-#@plot
-#def pp_thick_partons():
-#    pp_thickness(partons=True)
-#
-#
-#@plot
-#def pp_reduced(partons=False):
-#    fig = plt.figure(figsize=(columnwidth, aspect*columnwidth))
-#    ax = plt.gca()
-#
-#    xmax = 3
-#    dxy = 0.02
-#    ymax = aspect*xmax
-#
-#    lx = np.arange(-xmax, xmax, dxy)
-#    ly = np.arange(-ymax, ymax, dxy)
-#    xx, yy = np.meshgrid(lx, ly)
-#
-#    def gaussian(x0, y0, width):
-#        return np.exp(-((xx - x0)**2 + (yy - y0)**2)/(2*width**2))
-#
-#    TA = gaussian(-.5, 0, .5)
-#    TB = gaussian(.5, 0, .5)
-#    cmap = plt.cm.hot_r
-#    cmap.set_under('white')
-#    plt.imshow(np.sqrt(TA*TB), extent=(-xmax, xmax, -ymax, ymax),
-#               cmap=cmap, vmin=0.02)
-#
-#    ax.set_aspect('equal')
-#    ax.axis('off')
-#
-#    plt.xlim(-xmax, xmax)
-#    plt.ylim(-ymax, ymax)
-#    finish()
+@plot
+def pp_thick_partons():
+    pp_thickness(partons=True)
+
+
+@plot
+def pp_reduced(partons=False):
+    fig = plt.figure(figsize=(columnwidth, aspect*columnwidth))
+    ax = plt.gca()
+
+    xmax = 3
+    dxy = 0.02
+    ymax = aspect*xmax
+
+    lx = np.arange(-xmax, xmax, dxy)
+    ly = np.arange(-ymax, ymax, dxy)
+    xx, yy = np.meshgrid(lx, ly)
+
+    def gaussian(x0, y0, width):
+        return np.exp(-((xx - x0)**2 + (yy - y0)**2)/(2*width**2))
+
+    TA = gaussian(-.5, 0, .5)
+    TB = gaussian(.5, 0, .5)
+    cmap = plt.cm.hot_r
+    cmap.set_under('white')
+    plt.imshow(np.sqrt(TA*TB), extent=(-xmax, xmax, -ymax, ymax),
+               cmap=cmap, vmin=0.02)
+
+    ax.set_aspect('equal')
+    ax.axis('off')
+
+    plt.xlim(-xmax, xmax)
+    plt.ylim(-ymax, ymax)
+    finish()
 
 
 def main():

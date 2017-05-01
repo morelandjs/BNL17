@@ -975,25 +975,15 @@
     \begin{column}{.5\textwidth}
       \centering
       Nucleon degrees of freedom \\
-      \begin{tikzpicture}
-        \only<1>{
-          \node (pa) {\includegraphics[scale=.5]{pa_circle.png}};
-          \node at ([xshift=2em]pa.east) {\includegraphics[scale=.5]{pb_circle.png}};
-        }
-        \only<2>{
-          \node (pa) {\includegraphics[scale=.6]{pa_thick.png}};
-          \node at ([xshift=-1em]pa.east) {\includegraphics[scale=.6]{pb_thick.png}};
-        }
-      \end{tikzpicture}
+      \includegraphics<1>{pp_part}
+      \includegraphics<2>{pp_thick}
     \end{column}
     \vline
     \begin{column}{.5\textwidth}
       \centering
       Parton degrees of freedom \\
-      \begin{tikzpicture}
-        \node (pa) {\includegraphics[scale=.7]{qa_circle.png}};
-        \node at ([xshift=2em]pa.east) {\includegraphics[scale=.7]{qb_circle.png}};
-      \end{tikzpicture}
+      \includegraphics<1>{pp_part_partons}
+      \includegraphics<2>{pp_thick_partons}
     \end{column}
   \end{columns}
 
