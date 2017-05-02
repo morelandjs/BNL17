@@ -148,14 +148,20 @@
   "Do hydrodynamic simulations---using appropriately constructed energy profiles---provide quantitative descriptions of relativistic nuclear collisions?"
 \end{frame}
 
-\begin{frame}{\scshape Outline}
-  \begin{itemize}
-    \item Parametric initial conditions \\[3ex]
-    \item Bayesian parameter estimation \\[3ex]
-    \item Proof of concept in A+A collisions \\[3ex]
-    \item Adding nucleon substructure \\[3ex]
-    \item Ongoing work to constrain IC
-  \end{itemize} 
+\begin{frame}[plain]
+  \begin{columns}
+    \begin{column}{.1\textwidth}
+    \end{column}
+    \begin{column}{.85\textwidth}
+    {\Large
+    \setbeamercovered{transparent=50}
+    \begin{itemize}
+      \item<1-2>[\scshape \color{theme} Part I:] Bayesian analysis of entropy deposition in relativistic nuclear collisions\\[2ex]
+      \item<1>[\scshape \color{theme} Part II:] Using Bayesian methods to explore nucleon substructure
+    \end{itemize}
+    }%
+    \end{column}
+  \end{columns}
 \end{frame}
 
 \begin{frame}[t]{\scshape Sampling nuclei}
@@ -896,7 +902,8 @@
     \hfill \tiny Data: ALICE, PRL 117 182301 [1604.07663]
 \end{frame}
 
-\begin{frame}[plain]{Agreement: success of saturation models + hydro}
+
+\begin{frame}[plain]{Success of saturation models + hydro}
   \centering
   \medskip
   \scriptsize Hydro models with saturation IC, e.g.\ \trento, IP-Glasma and EKRT,\\
@@ -923,7 +930,8 @@
   \end{columns}
 \end{frame}
 
-\begin{frame}{Agreement validates IC output, not narrative!}
+
+\begin{frame}{Aside: agreement validates scaling, not narrative!}
   \begin{itemize}
   \large
   \item[\faicon{question-circle-o}] How do we proceed if two models with different narratives predict similar initial conditions?\\[2ex] 
@@ -936,19 +944,38 @@
   \end{center}
 \end{frame}
 
-\begin{frame}{New theory challenge: collectivity in small systems}
+
+\begin{frame}[plain]
+  \begin{columns}
+    \begin{column}{.1\textwidth}
+    \end{column}
+    \begin{column}{.85\textwidth}
+    {\Large
+    \setbeamercovered{transparent=50}
+    \begin{itemize}
+      \item<0>[\scshape \color{theme} Part I:] Bayesian analysis of entropy deposition in relativistic nuclear collisions\\[2ex]
+      \item<1>[\scshape \color{theme} Part II:] Using Bayesian methods to explore nucleon substructure
+    \end{itemize}
+    }%
+    \end{column}
+  \end{columns}
+\end{frame}
+
+
+\begin{frame}{What if we apply same models to small systems?}
   \centering
   {\tiny PHENIX submitted to PRC [1609.02894]} \\
   \includegraphics[width=.85\columnwidth]{phenix_models} \\[1ex]
   \small IP-Glasma + hydro could not reproduce experimental\\multiparticle correlations in small systems... what's wrong? \\[1ex]
+  \setbeamercovered{transparent=50}
   \begin{itemize}
-    \item Perhaps hydro isn't valid, incorporate initial CGC correlations
-    \item SONIC model works quite well, revisit the MC-Glauber model?
-    \item Saturation IC + hydro correct picture, small systems require additional nucleon substructure
+    \item<1> Perhaps hydro isn't valid, incorporate initial CGC correlations
+    \item<1> SONIC model works well, but deviates from Pb+Pb observables
+    \item<1-2> Saturation IC + hydro correct picture, small systems require additional nucleon substructure
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Saturation effects manifest in p+p overlap geometry}
+\begin{frame}{Understanding the model and data discrepancy}
   \vspace{.06\textheight}
   \begin{figure}[t]
     \definecolor{offblack}{HTML}{262626}
@@ -969,25 +996,142 @@
   \end{figure}
 \end{frame}
 
+
 \begin{frame}[t]{\trento\ model with nucleon substructure}
-  \bigskip
+  \vspace{.1\textheight}
   \begin{columns}[t]
     \begin{column}{.5\textwidth}
       \centering
-      Nucleon degrees of freedom \\
+      {\color{theme} \scshape \Large Nucleon dof} \\[1ex]
       \includegraphics<1>{pp_part}
       \includegraphics<2>{pp_thick}
+      \includegraphics<3>{pp_overlap}
+      \includegraphics<4>{pp_entropy}\\
     \end{column}
-    \vline
     \begin{column}{.5\textwidth}
       \centering
-      Parton degrees of freedom \\
+      {\color{theme} \scshape \Large Parton dof} \\[1ex]
       \includegraphics<1>{pp_part_partons}
       \includegraphics<2>{pp_thick_partons}
+      \includegraphics<3>{pp_overlap_partons}
+      \includegraphics<4>{pp_entropy_partons}\\
     \end{column}
   \end{columns}
+  \medskip
+  \only<1>{
+    \smallskip
+    \begin{columns}[t]
+      \begin{column}{.02\textwidth}
+      \end{column}
+      \begin{column}{.48\textwidth}
+        \begin{itemize}
+          \item Nucleon width [fm]
+        \end{itemize}
+      \end{column}
+      \begin{column}{.02\textwidth}
+      \end{column}
+      \begin{column}{.48\textwidth}
+        \begin{itemize}
+          \item Nucleon width [fm]
+          \item Parton width [fm]
+          \item Parton number
+        \end{itemize}
+      \end{column}
+    \end{columns}
+  }
+  \only<2>{
+    \begin{columns}[t]
+      \begin{column}{.45\textwidth}
+        \centering Gaussian nucleons\\[2ex]
+        \small $\displaystyle T_p(\mathbf{x}) = \frac{1}{2\pi w^2} \exp\Big({-}\frac{\mathbf{x}^2}{2 w^2}\Big)$
+      \end{column}
+      \begin{column}{.55\textwidth}
+        \centering Sum of Gaussian partons
+        {\small
+        \begin{align*}
+          T_p(\mathbf{x}) &= \sum\limits_{i=1}^{N_\mathrm{partons}} \frac{1}{2\pi v^2} \exp\Bigr({-}\frac{|\mathbf{x} - \mathbf{x}_i|^2}{2 v^2}\Bigr) \\
+          P(|\mathbf{x}_i|) &\sim \exp[-0.5\, r^2/(w^2-v^2)]
+        \end{align*}
+        }%
+      \end{column}
+    \end{columns}
+  }
+  \only<3>{
+    \centering Sample proton-proton inelastic cross section
+    \begin{align*}
+      T_{pp}(b) &= \int d^2x\, T_p(\mathbf{x} + \mathbf{b})\, T_p(\mathbf{x}) \\
+      P_\mathrm{coll}(b) &= 1 - \exp[-\sigma_{gg} T_{pp}(b)]\\
+      \sigma_\mathrm{NN}^\mathrm{inel} &= \int 2\pi b\, db\, P_\mathrm{coll}(b)
+    \end{align*}
+  }
+  \only<4>{
+    \centering Entropy density scales with generalized mean\\ of participant nucleon density, e.g. \\[2ex]
+    $\displaystyle \frac{dS}{d^2r\, dy}\Big\vert_{y=0} \propto \sqrt{T_A T_B}$
+    \begin{tikzpicture}[remember picture, overlay]
+      \node (mean) [align=left] at (1.5, 0) {\color{theme} geometric\\ \color{theme} mean};
+      \draw [->, color=theme, semithick] (mean.south west) to[out=-120, in=-90] (-.5, -.3);
+    \end{tikzpicture}
+  }
 
 \end{frame}
+
+
+\begin{frame}{E.g.\ substructure effect on nuclear thickness func's}
+  \smallskip
+  \begin{columns}
+    \begin{column}{.02\textwidth}
+      \rotatebox{90}{\small Parton width [fm]}
+    \end{column}
+    \begin{column}{.49\textwidth}
+      \centering Lead nucleus \\ 
+      \includegraphics[height=\columnwidth]{Pb_thickness} \\
+      \small Parton number
+    \end{column}
+    \begin{column}{.49\textwidth}
+      \centering Proton \\
+      \includegraphics[height=\columnwidth]{p_thickness} \\
+      \small Parton number
+    \end{column}
+  \end{columns}
+  \vspace{.75 cm}
+  \centering
+  \small nucleon width fixed, $w = 0.5$~fm
+\end{frame}
+
+
+\begin{frame}[t]{Bayesian analysis with nucleon substructure}
+  \medskip
+  {\large
+  \begin{itemize}
+    \item[\textcolor{pyred}{\faicon{warning}} \,] Disclaimer, hydrodynamic description may not be suitable for small collision systems!
+      \bigskip
+    \item[\textcolor{pyblue}{\faicon{commenting-o}} \,] Temporarily defer applicability questions to explore feasibility---would hydro ``even work''?
+  \end{itemize}
+  \medskip
+  {\scshape \color{theme} Work flow:}
+  \begin{enumerate}
+    \item Vary generalized mean, nucleon width, parton width, parton number, and QGP medium parameters
+    \item Calibrate to simultaneously fit p+Pb and Pb+Pb particle yields, mean $p_T$ and flow harmonics at midrapidity
+    \item Test quantitative accuracy of hydro in small systems. What are the preferred substructure parameters?
+  \end{enumerate}
+  }%
+\end{frame}
+
+\begin{frame}{Adding proton-lead observables}
+\end{frame}
+
+\begin{frame}{Stay tuned! Under construction...}
+  \centering
+  \includegraphics[height=.82\textheight]{mock_posterior}
+  \begin{tikzpicture}[remember picture, overlay]
+    \node[scale=15, color=theme, opacity=.6] at (current page.center) {\bf ?};
+  \end{tikzpicture}
+\end{frame}
+
+\begin{frame}{Summary and Outlook}
+\end{frame}
+
+\appendix
 
 \begin{frame}[plain]{Nucleon substructure---a new degree of freedom}
   \vspace{.2 cm}
@@ -1013,16 +1157,5 @@
     \end{column}
   \end{columns}
 \end{frame}
-
-\begin{frame}
-  \begin{itemize}
-    \Large
-    \item[\LARGE \textcolor{pyred}{\faicon{warning}} \,] Disclaimer, hydrodynamic description may not be suitable for small collision systems!
-      \bigskip
-    \item[\LARGE \textcolor{pyblue}{\faicon{commenting-o}} \,] Temporarily defer applicability questions to explore feasibility---would hydro ``even work''?
-  \end{itemize}
-\end{frame}
-
-\section{Introduction}
 
 \end{document}

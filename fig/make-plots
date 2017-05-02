@@ -13,6 +13,7 @@ from matplotlib import patches
 from matplotlib import ticker
 from matplotlib.gridspec import GridSpec
 from matplotlib.colors import LinearSegmentedColormap
+from matplotlib.colors import ListedColormap
 import operator
 from random import randint
 import husl
@@ -585,12 +586,13 @@ def entropy():
     )
 
 
-def pp_participants(parton_toggle=False):
+def pp_loc(parton_toggle=False):
     fig = plt.figure(figsize=(columnwidth, aspect*columnwidth))
     ax = plt.gca()
+    xmax = 1.75
 
     # load collision data
-    positions = (1.5, 0), (-1.5, 0)
+    positions = (.8, 0), (-.8, 0)
     colors = plt.cm.Blues(.5), plt.cm.Oranges(.5)
 
     partons_right = [(0.2, 0.346), (0.2, -0.346), (-.4, 0)]
@@ -602,179 +604,214 @@ def pp_participants(parton_toggle=False):
         if parton_toggle:
             for dx in partons:
                 pos = tuple(map(operator.add, x, dx))
-                p = plt.Circle(pos, 0.6, facecolor=color, lw=0.4, alpha=.6, edgecolor=offblack)
+                p = plt.Circle(pos, 0.3, facecolor=color, lw=0.4, alpha=.6, edgecolor=offblack)
                 ax.add_artist(p)
         else:
-            p = plt.Circle(x, 1, facecolor=color, lw=0.4, alpha=.6, edgecolor=offblack)
+            p = plt.Circle(x, .6, facecolor=color, lw=0.4, alpha=.6, edgecolor=offblack)
             ax.add_artist(p)
 
     ax.set_aspect('equal')
     ax.axis('off')
+    ax.get_xaxis().set_visible(False)
+    ax.get_yaxis().set_visible(False)
 
-    xmax = 3
-    ymax = aspect*xmax
     plt.xlim(-xmax, xmax)
-    plt.ylim(-ymax, ymax)
+    plt.ylim(-aspect*xmax, aspect*xmax)
     finish()
 
 
 @plot
 def pp_part():
-    pp_participants()
+    pp_loc()
 
 
 @plot
 def pp_part_partons():
-    pp_participants(parton_toggle=True)
+    pp_loc(parton_toggle=True)
 
 
-def pp_thickness(partons=False):
+def pp_dens(offset=.8, partons=False):
     fig = plt.figure(figsize=(columnwidth, aspect*columnwidth))
     ax = plt.gca()
 
-    xmax = 3
+    xymax = 1.75
     dxy = 0.02
-    ymax = aspect*xmax
+    extent = (-xymax, xymax, -xymax, xymax)
+    l = np.arange(-xymax, xymax, dxy)
+    xx, yy = np.meshgrid(l, l)
 
-    # load collision data
-    positions = 1.5, -1.5
-    colors = plt.cm.Oranges, plt.cm.Blues
-    extents = [(-xmax, 0, -ymax, ymax),
-               (0, xmax, -ymax, ymax)]
+    # blue colormap
+    cmap = plt.cm.Blues
+    my_cmap = cmap(np.arange(cmap.N))
+    my_cmap[:,-1] = np.linspace(0, 1, cmap.N)
+    blues = ListedColormap(my_cmap)
 
-    partons_left = [(0.2, 0.346), (0.2, -0.346), (-.4, 0)]
-    partons_right = [(0, 0.4), (0.346, -0.2), (-0.346, -0.2)]
-    proton = partons_left, partons_right 
+    # orange colormap
+    cmap = plt.cm.Oranges
+    my_cmap = cmap(np.arange(cmap.N))
+    my_cmap[:,-1] = np.linspace(0, 1, cmap.N)
+    oranges = ListedColormap(my_cmap)
 
-    lx = np.arange(-xmax/2, xmax/2, dxy)
-    ly = np.arange(-ymax, ymax, dxy)
-    xx, yy = np.meshgrid(lx, ly)
+    # colormaps
+    cmaps = oranges, blues
 
-    def gaussian(x0, y0, width):
+    # parton positions
+    proton = [[(0.2, 0.346), (0.2, -0.346), (-.4, 0)],
+              [(0, 0.4), (0.346, -0.2), (-0.346, -0.2)]]
+
+    def gauss(x0, y0, width):
         return np.exp(-((xx - x0)**2 + (yy - y0)**2)/(2*width**2))
 
     # load collision data
-    for pos, cmap, extent, coord in zip(positions, colors, extents, proton):
-        cmap.set_under('white')
+    for cmap, coord, b in zip(cmaps, proton, [-offset, offset]):
         if partons:
             thickness = np.zeros_like(xx)
-            for xy in coord:
-                thickness += gaussian(*xy, 0.3)
-            plt.imshow(thickness, extent=extent, cmap=cmap, vmin=0.02,
-                       origin='lower')
+            for (x, y) in coord:
+                thickness += gauss(x + b, y, 0.3)
+
+            plt.imshow(
+                thickness, extent=extent, cmap=cmap,
+                vmin=0.5, origin='lower'
+            )
         else:
-            plt.imshow(gaussian(0, 0, 0.5), extent=extent, cmap=cmap,
-                       vmin=0.02, origin='lower')
+            plt.imshow(
+                gauss(b, 0, .7), extent=extent, cmap=cmap,
+                vmin=0.5, origin='lower'
+            )
 
     ax.set_aspect('equal')
     ax.axis('off')
+    ax.get_xaxis().set_visible(False)
+    ax.get_yaxis().set_visible(False)
 
-    plt.xlim(-xmax, xmax)
-    plt.ylim(-ymax, ymax)
+    plt.xlim(-xymax, xymax)
+    plt.ylim(-aspect*xymax, aspect*xymax)
     finish()
-
-def pp_overlapping(partons=False, offset=1.5):
-    fig = plt.figure(figsize=(columnwidth, aspect*columnwidth))
-    ax = plt.gca()
-
-    xmax = 3
-    dxy = 0.02
-    ymax = aspect*xmax
-
-    # load collision data
-    positions = offset, -offset
-    colors = plt.cm.Blues, plt.cm.Oranges
-
-    partons_left = [(0.2, 0.346), (0.2, -0.346), (-.4, 0)]
-    partons_right = [(0, 0.4), (0.346, -0.2), (-0.346, -0.2)]
-    proton = partons_right, partons_left
-
-    lx = np.arange(-xmax, xmax, dxy)
-    ly = np.arange(-ymax, ymax, dxy)
-    xx, yy = np.meshgrid(lx, ly)
-
-    def gaussian(x0, y0, width):
-        return np.exp(-((xx - x0)**2 + (yy - y0)**2)/(2*width**2))
-
-    # load collision data
-    for pos, cmap, coord in zip(positions, colors, proton):
-        if partons:
-            thickness = np.zeros_like(xx)
-            for xy in coord:
-                x, y = xy
-                thickness += gaussian(x + pos, y, 0.3)
-            plt.contour(thickness,  np.linspace(0.02, thickness.max(), 8),
-                        extent=(-xmax, xmax, -ymax, ymax),
-                        colors=cmap(np.linspace(0.3, 1, 8)), origin='lower')
-        else:
-            thickness = gaussian(pos, 0, 0.5)
-            plt.contour(thickness, np.linspace(0.02, thickness.max(), 8),
-                        extent=(-xmax, xmax, -ymax, ymax),
-                        colors=cmap(np.linspace(0.3, 1, 8)), origin='lower', vmin=0.5)
-
-    ax.set_aspect('equal')
-    ax.axis('off')
-
-    plt.xlim(-xmax, xmax)
-    plt.ylim(-ymax, ymax)
-    plt.savefig('cat.png', transparent=True)
-    #finish()
-
-@plot
-def pp_overlap():
-    pp_overlapping(partons=False, offset=0.5)
-
-@plot
-def pp_overlap_partons():
-    pp_overlapping(partons=True, offset=0.5)
-
-@plot
-def pp_overlap_offset():
-    pp_overlapping(partons=False)
-
-@plot
-def pp_overlap_partons_offset():
-    pp_overlapping(partons=True)
 
 
 @plot
 def pp_thick():
-    pp_thickness(partons=False)
+    pp_dens(partons=False)
+
 
 @plot
 def pp_thick_partons():
-    pp_thickness(partons=True)
+    pp_dens(partons=True)
 
 
 @plot
-def pp_reduced(partons=False):
+def pp_overlap():
+    pp_dens(offset=.25, partons=False)
+
+
+@plot
+def pp_overlap_partons():
+    pp_dens(offset=.25, partons=True)
+
+
+def pp_profile(partons=False):
     fig = plt.figure(figsize=(columnwidth, aspect*columnwidth))
     ax = plt.gca()
 
-    xmax = 3
+    b = .25
+    xymax = 1.75
     dxy = 0.02
-    ymax = aspect*xmax
+    extent = (-xymax, xymax, -xymax, xymax)
+    l = np.arange(-xymax, xymax, dxy)
+    xx, yy = np.meshgrid(l, l)
 
-    lx = np.arange(-xmax, xmax, dxy)
-    ly = np.arange(-ymax, ymax, dxy)
-    xx, yy = np.meshgrid(lx, ly)
+    # parton positions
+    partons_left = (0.2, 0.346), (0.2, -0.346), (-.4, 0)
+    partons_right = (0, 0.4), (0.346, -0.2), (-0.346, -0.2)
 
-    def gaussian(x0, y0, width):
+    def gauss(x0, y0, width):
         return np.exp(-((xx - x0)**2 + (yy - y0)**2)/(2*width**2))
 
-    TA = gaussian(-.5, 0, .5)
-    TB = gaussian(.5, 0, .5)
-    cmap = plt.cm.hot_r
-    cmap.set_under('white')
-    plt.imshow(np.sqrt(TA*TB), extent=(-xmax, xmax, -ymax, ymax),
-               cmap=cmap, vmin=0.02)
+    # load collision data
+    if partons:
+        TA = np.zeros_like(xx)
+        for (x, y) in partons_left:
+            TA += gauss(x - b, y, 0.3)
+
+        TB = np.zeros_like(xx)
+        for (x, y) in partons_right:
+            TB += gauss(x + b, y, 0.3)
+
+        plt.imshow(
+            np.sqrt(TA*TB), extent=extent, cmap=plt.cm.hot_r,
+            vmin=0.5, origin='lower'
+        )
+    else:
+        TA = gauss(-b, 0, .7)
+        TB = gauss(b, 0, .7)
+        plt.imshow(
+            np.sqrt(TA*TB), extent=extent, cmap=plt.cm.hot_r,
+            vmin=0.5, origin='lower'
+        )
 
     ax.set_aspect('equal')
     ax.axis('off')
+    ax.get_xaxis().set_visible(False)
+    ax.get_yaxis().set_visible(False)
 
-    plt.xlim(-xmax, xmax)
-    plt.ylim(-ymax, ymax)
+    plt.xlim(-xymax, xymax)
+    plt.ylim(-aspect*xymax, aspect*xymax)
     finish()
+
+
+@plot
+def pp_entropy():
+    pp_profile()
+
+
+@plot
+def pp_entropy_partons():
+    pp_profile(partons=True)
+
+@plot
+def mock_posterior():
+    labels = ['norm', '$p$', '$k$', '$N_\mathrm{partons}$',
+              '$w$', '$v$', '$\eta/s min$']
+    ranges = (0, 1), (0, 1), (0, 1), (0, 1), (0, 1), (0, 1), (0, 1)
+    nxy = len(labels)
+
+    fig, axes = plt.subplots(
+        nrows=nxy, ncols=nxy,
+        sharex='col', sharey='row',
+        figsize=(textwidth, textwidth)
+    )
+
+    for n, (ax, lim) in enumerate(zip(axes.diagonal(), ranges)):
+
+        ticks = (
+            [lim[0], (lim[0] + lim[1])/2, lim[1]]
+        )
+
+        def fmt_tick(n):
+            s = str(float(n))
+            if abs(n) > 10 and s.endswith('.0'):
+                return s[:-2]
+            return s
+
+        for xy in ['x', 'y']:
+            getattr(ax, 'set_{}lim'.format(xy))(lim)
+            getattr(ax, 'set_{}ticks'.format(xy))(ticks)
+            getattr(ax, 'set_{}ticklabels'.format(xy))(
+                [fmt_tick(i) for i in ticks]
+            )
+
+    for n, label in enumerate(labels):
+        axes[-1][n].set_xlabel(label)
+        axes[n][0].set_ylabel(label)
+
+        for t, justify in zip(axes[-1][n].xaxis.get_major_ticks(),
+                                ['left', 'center', 'right']):
+            t.label1.set_horizontalalignment(justify)
+        for t, justify in zip(axes[n][0].yaxis.get_major_ticks(),
+                                ['bottom', 'center', 'top']):
+            t.label1.set_verticalalignment(justify)
+
+    finish(pad=0, h_pad=.3, w_pad=.3, rect=[0., 0., .97, .97])
 
 
 def main():
