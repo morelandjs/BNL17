@@ -422,6 +422,7 @@
 
 \begin{frame}[t]{Parametrization mimics existing theory calculations}
     \medskip
+    \only<1-2>{
     \begin{columns}[T]
         \begin{column}{0.3\textwidth}
             \includegraphics[height=0.8\textheight]{cgc_compare}
@@ -447,6 +448,23 @@
             \end{itemize}
         \end{column}
     \end{columns}
+  }
+  \only<2>{
+    \begin{tikzpicture}[remember picture, overlay]
+        \filldraw [draw=offblack, fill=offblack, overlay, 
+                   opacity=0.3, anchor=center] (current page.south west) 
+                   rectangle (\paperwidth,\paperwidth);
+        \node[inner sep=0pt, yshift=1cm, overlay] (node1) at 
+              (current page.center) {\includegraphics{ipglasma}};
+        \node[inner sep=0pt, below=1ex of node1.south, anchor=north] {
+            \begin{tcolorbox}[width=0.8\textwidth, boxrule=0pt, 
+                              colback=white, colframe=offblack, sharp corners]
+                No simple analytic form for IP-Glasma model. However, initial entropy density yield and eccentricity harmonics (above) agree closely with a generalized mean described by $p \approx 0$.
+            \end{tcolorbox}
+        };
+    \end{tikzpicture}
+  }
+
 \end{frame}
 
 \begin{frame}{Brief recap}{}
@@ -706,7 +724,7 @@
 
 
 \begin{frame}{Experimental data}
-
+  \centering \Huge PLACEHOLDER
 \end{frame}
 
 \begin{frame}{Input parameters}
@@ -939,7 +957,7 @@
   \end{itemize}
   \begin{center}
     These questions aside: there is strong evidence that saturation-\emph{like} effects govern particle production in relativistic nuclear collisions and their magnitude is well constrained.\\[2ex]
-    This work:\quad $\dfrac{dS}{dy}\Big\vert_{y=0} \approx \sqrt{\rho_A \,\rho_B}$\\[2ex]
+    This work:\quad $\dfrac{dS}{d^2r\,dy}\Big\vert_{y=0} \approx \sqrt{\rho_A \,\rho_B}$\\[2ex]
     \emph{Purely observational inference! Need not be exact,\\but robust to moderate perturbations.}
   \end{center}
 \end{frame}
@@ -961,39 +979,70 @@
   \end{columns}
 \end{frame}
 
+\begin{frame}{Flow-like signatures observed in small systems}
+  \medskip
+  Naively, hydrodynamic behavior was only expected in heavy-ion collisions, \emph{not} in 
+  proton-proton and proton-lead collisions.
+  \begin{center}
+    \Large \color{theme}
+    ``When does hydrodynamics turn on/off?''
+  \end{center}
+  \medskip
+  \includegraphics[width=.5\textwidth]{corr2D_PbPb}
+  \includegraphics[width=.5\textwidth]{corr2D_pPb}
+  \begin{tikzpicture}[remember picture, overlay]
+    \node (f1) at ([xshift=-1.2cm, yshift=-1.6cm]current page.center) {};
+    \node (f2) at ([xshift=3cm, yshift=-2.25cm]current page.center) {};
+    \node (txt) [align=center] at ([yshift=-4cm]current page.center) {\scshape \color{pyred} Long-range rapidity correlations\\\color{pyred}\scshape characteristic of flow};
+    \draw [->, thick, color=pyred] (txt.north) to[out=90, in=0] (f1);
+    \draw [->, thick, color=pyred] (txt.north) to[out=90, in=120] (f2);
+  \end{tikzpicture}
+\end{frame}
 
-\begin{frame}{What if we apply same models to small systems?}
+\begin{frame}{What if we apply A+A models to small systems?}
   \centering
   {\tiny PHENIX submitted to PRC [1609.02894]} \\
   \includegraphics[width=.85\columnwidth]{phenix_models} \\[1ex]
-  \small IP-Glasma + hydro could not reproduce experimental\\multiparticle correlations in small systems... what's wrong? \\[1ex]
+  \small IP-Glasma + hydro model could not reproduce experimental\\multiparticle correlations in small systems... what's wrong? \\[1ex]
   \setbeamercovered{transparent=50}
   \begin{itemize}
     \item<1> Perhaps hydro isn't valid, incorporate initial CGC correlations
-    \item<1> SONIC model works well, but deviates from Pb+Pb observables
     \item<1-2> Saturation IC + hydro correct picture, small systems require additional nucleon substructure
   \end{itemize}
+  \scriptsize Note: SONIC model pictured above has not demonstrated same level\\
+  of agreement as IP-Glasma + hydro in Pb+Pb collisions
 \end{frame}
 
-\begin{frame}{Understanding the model and data discrepancy}
-  \vspace{.06\textheight}
-  \begin{figure}[t]
-    \definecolor{offblack}{HTML}{262626}
-    \begin{tikzpicture}[
-        scale=.5,
-        color=offblack,
-        greydash/.style={line width=0.6, dash pattern=on 5pt off 3pt, color=black!60!white}
-      ]
-      \def\r{1.5};
-      \node (fig) {\includegraphics[width=0.9\textwidth]{reduced_thickness}};
-      \coordinate (a) at (5.2, 3.0);
-      \coordinate (b) at ($(a) + (\r, 0)$);
-      \node at ($(a)!0.5!(b) + (0, 1.4*\r)$) {\small Beam view};
-      \draw[greydash] (a) circle (\r);
-      \draw[greydash] (b) circle (\r);
-      \draw[->, semithick] (a) -- node[above] {$\small x$} (b);
-    \end{tikzpicture}
-  \end{figure}
+
+\begin{frame}{"Eccentric protons?" \quad {\scriptsize \textcolor{offblack}{Schenke, Venugopalan PRL 113 102301}}}
+  \small
+  \begin{itemize}
+    \item Data highly constrains functional form of entropy deposition.\\[1ex]
+    \item Cannot modify mapping without spoiling bulk A+A observables, but \emph{we can} add
+          fine structure to the inputs (thickness functions)\\[2ex]
+  \end{itemize}
+  \centering
+  \only<1>{\includegraphics[width=.8\textwidth]{Pb_thick}}
+  \only<2>{\includegraphics[width=.8\textwidth]{p_thick}} \\[2ex]
+  \only<1>{Historical analogue: nucleon hot spots necessary for triangular flow}
+  \only<2>{Possibly similar picture for partons inside the nucleon?}
+
+\end{frame}
+
+\begin{frame}{Theory perspective: proton shape fluctuations}
+\end{frame}
+
+\begin{frame}
+  \begin{columns}
+    \begin{column}{.8\textwidth}
+    \centering
+      {\Large \scshape \color{theme} This work:}\\[1ex]
+    \begin{itemize}
+      \item Implement parametric nucleon substructure within \trento\ initial condition model
+      \item Estimate new substructure parameters using Bayesian methodology 
+    \end{itemize}
+    \end{column}
+  \end{columns}
 \end{frame}
 
 
@@ -1076,7 +1125,7 @@
 \end{frame}
 
 
-\begin{frame}{E.g.\ substructure effect on nuclear thickness func's}
+\begin{frame}{Substructure effect on nuclear thickness functions}
   \smallskip
   \begin{columns}
     \begin{column}{.02\textwidth}
@@ -1099,6 +1148,11 @@
 \end{frame}
 
 
+\begin{frame}{Substructure effect on initial entropy density}
+  \centering \Huge PLACEHOLDER
+\end{frame}
+
+
 \begin{frame}[t]{Bayesian analysis with nucleon substructure}
   \medskip
   {\large
@@ -1117,7 +1171,17 @@
   }%
 \end{frame}
 
-\begin{frame}{Adding proton-lead observables}
+\begin{frame}[t]{Adding proton-lead observables}
+  \vspace{.075\textheight}
+  \includegraphics{observables} \\
+    \centering
+    {\tiny Data:\enskip PRC 901 (2015) 064905,\enskip PLB 727 (2013) 371-380,\enskip PLB 724 (2013) 213}
+  \bigskip
+  \begin{itemize}
+    \item Calibrate on yields, mean $p_T$ and flows (same as Pb+Pb)
+    \item Flows $v_n\{2\}$ are dicey in small systems. Use CMS data with peripheral substraction to remove non-flow contributions
+    \item Rescale $N_\mathrm{ch}$ and $N_\mathrm{trk}$ by mean values to that the ensure observable vector can be calculated at all design points
+  \end{itemize}
 \end{frame}
 
 \begin{frame}{Stay tuned! Under construction...}
@@ -1128,7 +1192,28 @@
   \end{tikzpicture}
 \end{frame}
 
+
 \begin{frame}{Summary and Outlook}
+  \large Presented \\
+  \begin{itemize}
+    \small
+    \item Yields, mean $p_T$ and flows strongly constrain local entropy deposition in Pb+Pb collisions.
+    \item Bayesian analysis supports the approximate scaling.\\[1ex]
+      $\displaystyle \frac{dS}{d^2r\,dy}\Big\vert_{y=0} \approx \sqrt{\rho_A\, \rho_B}$\\[1ex]
+    \item I've shown a natural framework to extend parametric initial conditions to include nucleon substructure.
+  \end{itemize}
+  \large To do \\
+  \begin{itemize}
+    \small
+    \item Hydro model for small systems requires further justication.
+    \item Initial state correlations exist, how big are they?
+    \item Fire up the super computing cluster! Currently working to simultaneously calibrate on p+Pb and P+Pb observables.
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}[plain]
+  \centering \Large \color{theme} \scshape Backup Slides
 \end{frame}
 
 \appendix
@@ -1157,5 +1242,28 @@
     \end{column}
   \end{columns}
 \end{frame}
+
+
+\begin{frame}{Understanding the model and data discrepancy}
+  \vspace{.06\textheight}
+  \begin{figure}[t]
+    \definecolor{offblack}{HTML}{262626}
+    \begin{tikzpicture}[
+        scale=.5,
+        color=offblack,
+        greydash/.style={line width=0.6, dash pattern=on 5pt off 3pt, color=black!60!white}
+      ]
+      \def\r{1.5};
+      \node (fig) {\includegraphics[width=0.9\textwidth]{reduced_thickness}};
+      \coordinate (a) at (5.2, 3.0);
+      \coordinate (b) at ($(a) + (\r, 0)$);
+      \node at ($(a)!0.5!(b) + (0, 1.4*\r)$) {\small Beam view};
+      \draw[greydash] (a) circle (\r);
+      \draw[greydash] (b) circle (\r);
+      \draw[->, semithick] (a) -- node[above] {$\small x$} (b);
+    \end{tikzpicture}
+  \end{figure}
+\end{frame}
+
 
 \end{document}
