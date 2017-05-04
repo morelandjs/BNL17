@@ -14,6 +14,7 @@ from matplotlib import ticker
 from matplotlib.gridspec import GridSpec
 from matplotlib.colors import LinearSegmentedColormap
 from matplotlib.colors import ListedColormap
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 import operator
 from random import randint
 import husl
@@ -812,6 +813,65 @@ def mock_posterior():
             t.label1.set_verticalalignment(justify)
 
     finish(pad=0, h_pad=.3, w_pad=.3, rect=[0., 0., .97, .97])
+
+
+def ic_properties(system):
+    fig, axes = plt.subplots(
+            ncols=2, nrows=2, sharex=True,
+            figsize=(textwidth, 2*aspect*columnwidth)
+            )
+
+    cent = np.linspace(0, 100, 10)
+    paths = 'width/*.dat', 'number/*.dat'
+    labels = 'parton width [fm]', 'parton number'
+    limits = (0.2, 0.8), (3, 21)
+    legends = ['\n'.join((r'geometric mean $p=0$', 'parton number n=3',
+        r'nucleon width $w=0.88$ fm')),
+        '\n'.join((r'geometric mean $p=0$', 'parton width $v=0.4$ fm',
+            r'nucleon width $w=0.88$ fm'))]
+
+    for (ax1, ax2), path, lbl, lim, leg in zip(axes, paths, labels, limits, legends):
+        files = sorted(glob.glob('/'.join((system, path))))
+
+        for n, fname in enumerate(files):
+          data = np.loadtxt(fname, usecols=(3,4,5))
+          mult, e2, e3 = data[data[:,0].argsort()[::-1]].T
+          mult = mult.reshape(10, -1).mean(axis=1)
+          e2 = e2.reshape(10, -1).mean(axis=1)
+          e3 = e3.reshape(10, -1).mean(axis=1)
+
+          color = plt.cm.coolwarm(n/len(files))
+          ax1.plot(cent, mult, color=color)
+          ax2.plot(cent, e2, color=color)
+          ax2.plot(cent, e3, color=color)
+
+        # use log scale
+        ax1.set_yscale('log')
+        ax1.set_ylabel(r'$dS/dy\, \vert_{y=0}$')
+        ax1.annotate(leg, xy=(0, .03))
+        ax2.set_ylabel(r'$\varepsilon_n$')
+        ax2.annotate(r'$\varepsilon_2$', xy=(50, 0.55))
+        ax2.annotate(r'$\varepsilon_3$', xy=(50, 0.35))
+
+        # make a colorbar
+        divider = make_axes_locatable(ax2)
+        cax = divider.append_axes('right', size='5%', pad=0.17)
+        sm = plt.cm.ScalarMappable(
+                cmap=plt.cm.coolwarm,
+                norm=plt.Normalize(vmin=lim[0], vmax=lim[1])
+                )
+        sm._A = []
+        clb = plt.colorbar(sm, cax=cax)
+        clb.set_label(lbl, labelpad=7.5, rotation=-90)
+
+    ax1.set_xlabel('Centrality %')
+    ax2.set_xlabel('Centrality %')
+    finish()
+
+
+@plot
+def ic_prop_pbpb():
+    ic_properties('lead-lead')
 
 
 def main():

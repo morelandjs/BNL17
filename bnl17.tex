@@ -142,29 +142,110 @@
 
 \usebackgroundtemplate{}
 
-\begin{frame}{\scshape Motivation}
-  "How does energy (entropy) deposition scale in a relativistic nuclear collision as a function of nuclear overlap density?" \\[0.1\textheight]
+%\begin{frame}{\scshape Motivation}
+%  "How does energy (entropy) deposition scale in a relativistic nuclear collision as a function of nuclear overlap density?" \\[0.1\textheight]
+%
+%  "Do hydrodynamic simulations---using appropriately constructed energy profiles---provide quantitative descriptions of relativistic nuclear collisions?"
+%\end{frame}
+%
+%\begin{frame}[plain]
+%  \begin{columns}
+%    \begin{column}{.1\textwidth}
+%    \end{column}
+%    \begin{column}{.85\textwidth}
+%    {\Large
+%    \setbeamercovered{transparent=50}
+%    \begin{itemize}
+%      \item<1-2>[\scshape \color{theme} Part I:] Bayesian analysis of entropy deposition in relativistic nuclear collisions\\[2ex]
+%      \item<1>[\scshape \color{theme} Part II:] Using Bayesian methods to explore nucleon substructure
+%    \end{itemize}
+%    }%
+%    \end{column}
+%  \end{columns}
+%\end{frame}
 
-  "Do hydrodynamic simulations---using appropriately constructed energy profiles---provide quantitative descriptions of relativistic nuclear collisions?"
+\begin{frame}{Lattice predicts existence of a quark-gluon plasma}
+  Lattice QCD calculations find a pseudo-critical phase transition temperature $T \approx 155$~MeV, where hadrons melt to form a deconfined soup of quarks and gluons dubbed a quark-gluon plasma (QGP)\\[2ex]
+  \begin{columns}
+    \begin{column}{0.47\textwidth}
+        \includegraphics[width=\columnwidth]{confined_deconfined}
+    \end{column}
+    \begin{column}{0.4\textwidth}
+        \includegraphics[width=\columnwidth]{phasediagram}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{What are the quark-gluon plasma bulk properties?}
+    \begin{center}
+        \begin{tikzpicture}
+            \node[anchor=center, yshift=0.75cm] (qgp) at (current page.center) {\includegraphics[width=0.35\textwidth]{qgp}};
+            \node[text width=4cm, xshift=3.5cm, yshift=3.5cm] (t1) at (current page.center) {How and under what\\ conditions is it formed\\ in a nuclear collision?};
+            \node[text width=4.75cm, xshift=3.5cm, yshift=-1.5cm] (t2) at (current page.center) {How does it recombine\\ to form colorless hadrons?};
+            \node[text width=4cm, xshift=-3.5cm, yshift=3cm] (t3) at (current page.center) {Equation of state?\\ Relations between\\ thermal quantities,\\ e.g.\ $P=P(\epsilon)$};
+            \node[text width=4cm, xshift=-3.5cm, yshift=-2cm] (t4) at (current page.center) {Transport properties?\\ shear/bulk viscosity,\\ probe energy loss, etc};
+            \path[->, >=stealth, theme] ([xshift=-.1cm]t1.west) edge [out=-180, in=90] (qgp.north);
+            \path[->, >=stealth, theme] ([yshift=.1cm]t2.north) edge [out=90, in=-30] (qgp.east);
+            \path[->, >=stealth, theme] ([xshift=-.8cm]t3.south) edge [out=-90, in=180] (qgp.west);
+            \path[->, >=stealth, theme] (t4.east) edge [out=0, in=-90] (qgp.south);
+        \end{tikzpicture}
+    \end{center}
+\end{frame}
+
+
+\begin{frame}{Quark-gluon plasma is not directly detectable}
+    \medskip
+    \centering
+    \includegraphics[height=0.8\textheight]{qgp_modeling}
+\end{frame}
+
+
+\begin{frame}[plain,t]{Transport models connect experiment and theory}
+  \vspace{.075\textheight}
+  \begin{enumerate}
+    \small
+  \item Initial conditions describe $T^{\mu\nu}$ at time $\tau=0^+$
+    \item Pre-equilibrium dynamics rapidly drive the system to hydrodynamic applicability
+    \item Relativistic viscous hydrodynamics solves $\partial_\mu T^{\mu\nu}=0$,\\
+      converts spatial anisotropy into momentum anisotropy
+    \item QGP medium is particlized near phase transition temperature
+    \item Hadronic afterburner simulates subsequent collisions and decays
+  \end{enumerate}
+  \includegraphics<1>[width=\textwidth]{hic_picture1}
+  \includegraphics<2>[width=\textwidth]{hic_picture3}
+  \only<2>{
+  \begin{tikzpicture}[remember picture, overlay]
+    \node[align=left] (ic) at ([xshift=1.6cm, yshift=-1.9cm]current page.center)
+    {\Large\scshape \color{theme} This talk:\\[.5ex]\Large \scshape \color{theme} QGP initial conditions};
+    \draw[->, line width=0.4mm, color=theme] (ic.west) -- ([xshift=-1.5cm] ic.west);
+  \end{tikzpicture}
+  }
+\end{frame}
+
+
+\begin{frame}{Model-to-data comparison: the \emph{inverse} problem}
+  \centering \vspace{0.1\textheight}
+  \includegraphics[width=\textwidth]{model2data}
 \end{frame}
 
 \begin{frame}[plain]
   \begin{columns}
     \begin{column}{.1\textwidth}
     \end{column}
-    \begin{column}{.85\textwidth}
+    \begin{column}{.9\textwidth}
     {\Large
     \setbeamercovered{transparent=50}
     \begin{itemize}
-      \item<1-2>[\scshape \color{theme} Part I:] Bayesian analysis of entropy deposition in relativistic nuclear collisions\\[2ex]
-      \item<1>[\scshape \color{theme} Part II:] Using Bayesian methods to explore nucleon substructure
+      \item<1>[\scshape \color{theme} Part I:] Constructing parametric QGP initial conditions at midrapidity\\[1ex]
+      \item<0>[\scshape \color{theme} Part II:] Bayesian parameter estimation\\[1ex]
+      \item<0>[\scshape \color{theme} Part III:] Adding nucleon substructure
     \end{itemize}
     }%
     \end{column}
   \end{columns}
 \end{frame}
 
-\begin{frame}[t]{\scshape Sampling nuclei}
+\begin{frame}[t]{QGP initial conditions: sampling nuclei}
   \begin{tikzpicture}[remember picture, overlay]
     \only<1>{\lead{lead_1}}
     \only<2>{\lead{lead_2}}
@@ -177,8 +258,8 @@
   {\color{theme} Correlated nucleus algorithm: J.\ Bernhard} \\
   \begin{enumerate}
     \small
-    \item Pre-sample nucleon radii from Woods-Saxon distribution
-    \item Place nucleons in order of increasing radius
+    \item Pre-sample nucleon positions from Woods-Saxon dist.\ for nucleus
+    \item Place nucleons in order of increasing radii
     \item For each nucleon, sample random $\theta$ and $\phi$ \\
     \item Resample angles if any two nucleons \\
           are too close $|\mathbf{x}_i - \mathbf{x}_j| < d_\mathrm{min}$
@@ -202,7 +283,7 @@
   \end{columns}
 \end{frame}
 
-\begin{frame}{\scshape Sampling nuclei}
+\begin{frame}{Correlated vs uncorrelated nuclei}
   \begin{columns}
     \begin{column}{.5\textwidth}
       \centering
@@ -482,7 +563,7 @@
 
 \end{frame}
 
-\begin{frame}{Connecting initial state physics with observables}
+\begin{frame}{Embed IC in computationally intensive model}
   \bigskip
   Cannot directly observe initial state physics ($\tau \le 3 \cdot 10^{-24}$~s), only final hadrons. Must simulate full spacetime evolution of a relativistic heavy-ion collision. \\[3ex]
 
@@ -586,6 +667,23 @@
 \end{frame}
 
 
+\begin{frame}[plain]
+  \begin{columns}
+    \begin{column}{.1\textwidth}
+    \end{column}
+    \begin{column}{.9\textwidth}
+    {\Large
+    \setbeamercovered{transparent=50}
+    \begin{itemize}
+      \item<0>[\scshape \color{theme} Part I:] Constructing parametric QGP initial conditions at midrapidity\\[1ex]
+      \item<1>[\scshape \color{theme} Part II:] Bayesian parameter estimation\\[1ex]
+      \item<0>[\scshape \color{theme} Part III:] Adding nucleon substructure
+    \end{itemize}
+    }%
+    \end{column}
+  \end{columns}
+\end{frame}
+
 
 \begin{frame}{Solution: Bayesian parameter estimation}
   \begin{columns}[T]
@@ -683,7 +781,7 @@
 \end{frame}
 
 
-\begin{frame}{Heavy-ion collision model}
+\begin{frame}{Details: heavy-ion collision model}
   \smallskip
   \begin{columns}[T]
       \begin{column}{.075\textwidth}
@@ -723,11 +821,11 @@
 \end{frame}
 
 
-\begin{frame}{Experimental data}
+\begin{frame}{Experimental calibration data}
   \centering \Huge PLACEHOLDER
 \end{frame}
 
-\begin{frame}{Input parameters}
+\begin{frame}{Model input parameters}
   \definecolor{emph}{rgb}{.91,.41,.17}
   \begin{columns}
     \column{.55\textwidth}
@@ -967,12 +1065,13 @@
   \begin{columns}
     \begin{column}{.1\textwidth}
     \end{column}
-    \begin{column}{.85\textwidth}
+    \begin{column}{.9\textwidth}
     {\Large
     \setbeamercovered{transparent=50}
     \begin{itemize}
-      \item<0>[\scshape \color{theme} Part I:] Bayesian analysis of entropy deposition in relativistic nuclear collisions\\[2ex]
-      \item<1>[\scshape \color{theme} Part II:] Using Bayesian methods to explore nucleon substructure
+      \item<0>[\scshape \color{theme} Part I:] Constructing parametric QGP initial conditions at midrapidity\\[1ex]
+      \item<0>[\scshape \color{theme} Part II:] Bayesian parameter estimation\\[1ex]
+      \item<1>[\scshape \color{theme} Part III:] Adding nucleon substructure
     \end{itemize}
     }%
     \end{column}
@@ -1030,15 +1129,37 @@
 \end{frame}
 
 \begin{frame}{Theory perspective: proton shape fluctuations}
+  \medskip
+  \begin{columns}
+    \begin{column}{.6\textwidth}
+      {\color{theme} \scshape Several important contributions:} \\[1ex]
+      {\small
+      \emph{Shapes of the proton},\\Gerald A.\ Miller, PRC 68 (2003) 022201 \\[1ex]
+      {\color{theme} Spin-dependent proton shape fluctuations}\\
+      \medskip\hrule\medskip
+      \emph{Revealing proton shape fluctuations with incoherent diffraction at high energy},\\ M\"antysaari, Schenke, PRD 94, 034042 \\[1ex]
+      \emph{Evidence of strong proton shape fluctuations from incoherent diffraction},\\ M\"antysaari, Schenke, PRL 117, 052301 \\[1ex]
+      {\color{theme} Work to implement proton shape fluctuations within IP-Glasma. Shape parameters constrained by J/$\Psi$ differential cross section.}
+      }%
+    \end{column}
+    \begin{column}{.4\textwidth}
+      \centering
+      \includegraphics[width=.9\columnwidth]{density_lumpy}\\
+      \includegraphics[width=.9\columnwidth]{density_smooth}\\
+      {\tiny Various lumpy proton shapes input to IP-Sat}
+    \end{column}
+  \end{columns}
+
 \end{frame}
 
 \begin{frame}
   \begin{columns}
-    \begin{column}{.8\textwidth}
+    \begin{column}{.9\textwidth}
     \centering
-      {\Large \scshape \color{theme} This work:}\\[1ex]
+    {\Large \color{theme} \rm This work:}\\
     \begin{itemize}
-      \item Implement parametric nucleon substructure within \trento\ initial condition model
+      \large
+      \item Implement parametric nucleon substructure within the \trento\ initial condition model
       \item Estimate new substructure parameters using Bayesian methodology 
     \end{itemize}
     \end{column}
@@ -1149,7 +1270,8 @@
 
 
 \begin{frame}{Substructure effect on initial entropy density}
-  \centering \Huge PLACEHOLDER
+  \centering
+  \includegraphics[width=\textwidth]{ic_prop_pbpb}
 \end{frame}
 
 
@@ -1213,7 +1335,7 @@
 \end{frame}
 
 \begin{frame}[plain]
-  \centering \Large \color{theme} \scshape Backup Slides
+  \centering \Large \color{theme} \rm Backup Slides
 \end{frame}
 
 \appendix
