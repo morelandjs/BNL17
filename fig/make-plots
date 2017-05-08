@@ -11,9 +11,9 @@ import matplotlib.ticker as tick
 from matplotlib import lines
 from matplotlib import patches
 from matplotlib import ticker
-from matplotlib.gridspec import GridSpec
 from matplotlib.colors import LinearSegmentedColormap
 from matplotlib.colors import ListedColormap
+import matplotlib.gridspec as gridspec
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import operator
 from random import randint
@@ -816,21 +816,31 @@ def mock_posterior():
 
 
 def ic_properties(system):
-    fig, axes = plt.subplots(
-            ncols=2, nrows=2, sharex=True,
-            figsize=(textwidth, 2*aspect*columnwidth)
-            )
+    fig = plt.figure(figsize=(textwidth, 2*aspect*columnwidth))
+
+    gs = gridspec.GridSpec(2, 3)
+    ax4 = fig.add_subplot(gs[1,0])
+    ax5 = fig.add_subplot(gs[1,1])
+    ax1 = fig.add_subplot(gs[0,0], sharex=ax4)
+    ax2 = fig.add_subplot(gs[0,1], sharex=ax5)
+    ax6 = fig.add_subplot(gs[1,2], sharey=ax5)
+    ax3 = fig.add_subplot(gs[0,2], sharex=ax6, sharey=ax2)
+
+    axes = [[ax1, ax2, ax3], [ax4, ax5, ax6]]
+
+    plt.setp(ax1.get_xticklabels(), visible=False)
+    plt.setp(ax2.get_xticklabels(), visible=False)
+    plt.setp(ax3.get_xticklabels(), visible=False)
+    #plt.setp(ax3.get_yticklabels(), visible=False)
+    #plt.setp(ax6.get_yticklabels(), visible=False)
 
     cent = np.linspace(0, 100, 10)
     paths = 'width/*.dat', 'number/*.dat'
     labels = 'parton width [fm]', 'parton number'
     limits = (0.2, 0.8), (3, 21)
-    legends = ['\n'.join((r'geometric mean $p=0$', 'parton number n=3',
-        r'nucleon width $w=0.88$ fm')),
-        '\n'.join((r'geometric mean $p=0$', 'parton width $v=0.4$ fm',
-            r'nucleon width $w=0.88$ fm'))]
+    legends = 'parton number n=3', 'parton width $v=0.4$ fm'
 
-    for (ax1, ax2), path, lbl, lim, leg in zip(axes, paths, labels, limits, legends):
+    for (ax1, ax2, ax3), path, lbl, lim, leg in zip(axes, paths, labels, limits, legends):
         files = sorted(glob.glob('/'.join((system, path))))
 
         for n, fname in enumerate(files):
@@ -843,18 +853,19 @@ def ic_properties(system):
           color = plt.cm.coolwarm(n/len(files))
           ax1.plot(cent, mult, color=color)
           ax2.plot(cent, e2, color=color)
-          ax2.plot(cent, e3, color=color)
+          ax3.plot(cent, e3, color=color)
 
         # use log scale
         ax1.set_yscale('log')
-        ax1.set_ylabel(r'$dS/dy\, \vert_{y=0}$')
-        ax1.annotate(leg, xy=(0, .03))
-        ax2.set_ylabel(r'$\varepsilon_n$')
-        ax2.annotate(r'$\varepsilon_2$', xy=(50, 0.55))
-        ax2.annotate(r'$\varepsilon_3$', xy=(50, 0.35))
+        ax1.annotate(leg, xy=(0.05, .05), xycoords='axes fraction')
+
+        if lbl == 'parton width [fm]':   
+            ax1.set_title(r'$dS/dy\, \vert_{y=0}$', y=0.9)
+            ax2.set_title(r'$\varepsilon_2$', y=0.9)
+            ax3.set_title(r'$\varepsilon_3$', y=0.9)
 
         # make a colorbar
-        divider = make_axes_locatable(ax2)
+        divider = make_axes_locatable(ax3)
         cax = divider.append_axes('right', size='5%', pad=0.17)
         sm = plt.cm.ScalarMappable(
                 cmap=plt.cm.coolwarm,
@@ -866,12 +877,17 @@ def ic_properties(system):
 
     ax1.set_xlabel('Centrality %')
     ax2.set_xlabel('Centrality %')
-    finish()
+    ax3.set_xlabel('Centrality %')
+    finish(w_pad=0)
 
 
 @plot
 def ic_prop_pbpb():
     ic_properties('lead-lead')
+
+@plot
+def ic_prop_ppb():
+    ic_properties('proton-lead')
 
 
 def main():

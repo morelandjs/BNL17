@@ -822,7 +822,30 @@
 
 
 \begin{frame}{Experimental calibration data}
-  \centering \Huge PLACEHOLDER
+    \begin{center}
+    All experimental data from the ALICE collaboration at the LHC \\
+    Pb-Pb collisions at $\sqrt s = 2.76$ and 5.02 TeV
+  \end{center}
+  \begin{columns}
+    \column{.6\textwidth}
+    Centrality dependence of: \\[1ex]
+    \begin{itemize}
+      \setlength{\itemsep}{1.5ex}
+      \item Charged particle yields $dN_\text{ch}/d\eta$ \\
+        {\tiny PRL 106 032301 [1012.1657], PRL 116 222302 [1512.06104]}
+      \item Identified particle ($\pi$, $K$, $p$) yields $dN/dy$
+        and mean transverse momenta $\langle p_T \rangle$ (2.76 TeV only) \\
+        {\tiny PRC 88 044910 [1303.0737]}
+      \item Anisotropic flow cumulants $v_n\{2\}$ \\
+        {\tiny PRL 116 132302 [1602.01119]}
+    \end{itemize}
+    \column{.4\textwidth}
+    \centering
+    \includegraphics[height=.25\textheight]{nch}
+    \hfill
+    \includegraphics[height=.25\textheight]{spectra} \\
+    \includegraphics[height=.4\textheight]{flow}
+  \end{columns}
 \end{frame}
 
 \begin{frame}{Model input parameters}
@@ -1271,7 +1294,14 @@
 
 \begin{frame}{Substructure effect on initial entropy density}
   \centering
-  \includegraphics[width=\textwidth]{ic_prop_pbpb}
+  \only<1>{
+    {\color{theme} \rm \trento: Pb+Pb, $\sqrt{s_\mathrm{NN}}=2.76$~TeV, $p=0$, $w=0.88$~fm} \\[1ex]
+  }
+  \only<2>{
+    {\color{theme} \rm \trento: p+Pb, $\sqrt{s_\mathrm{NN}}=2.76$~TeV, $p=0$, $w=0.88$~fm} \\[1ex]
+  }
+  \includegraphics<1>[width=\textwidth]{ic_prop_pbpb}
+  \includegraphics<2>[width=\textwidth]{ic_prop_ppb}
 \end{frame}
 
 
