@@ -72,6 +72,7 @@
 \usetikzlibrary{calc}
 \usetikzlibrary{positioning}
 \usetikzlibrary{overlay-beamer-styles}
+\usetikzlibrary{arrows}
 
 \usepackage{amsmath}
 
@@ -118,7 +119,7 @@
 \newcommand{\tran}{^\intercal}
 \newcommand{\T}{\tilde{T}}
 
-\title[Nucleon substructure]{Probing nucleon substructure with Bayesian parameter estimation}
+\title[Bayesian parameter estimation for HIC]{Bayesian parameter estimation for heavy-ion collisions: inferring properties of the quark-gluon plasma}
 \author[J.\ S.\ Moreland]{J.\ S.\ Moreland,\, J.\ E.\ Bernhard,\, W.\ Ke,\, S.\ A.\ Bass}
 \institute[Duke U.]{Duke Univerity}
 \date{\today}
@@ -127,42 +128,14 @@
 
 \section{Title}
 
-\usebackgroundtemplate{%
-\tikz[overlay,remember picture] \node[opacity=1, at=(current page.center)] {
-   \includegraphics{cover}};
-}
-
 
 \begin{frame}[t,plain,noframenumbering]
-  \centering \vspace{.2\textheight}
-  {\color{theme}\Large\rm\inserttitle} \\[.04\textheight]
-  {\normalsize \insertauthor---Duke U.} \\
-  {\normalsize BNL RIKEN Seminar, May 5, 2017}
+  \centering \vspace{.3\textheight}
+  {\color{theme}\large\rm\inserttitle} \\[.04\textheight]
+  {\small \insertauthor---Duke U.} \\[1ex]
+  {\small XLVII International Symposium on Multiparticle Dynamics\\September 14, 2017}
 \end{frame}
 
-\usebackgroundtemplate{}
-
-%\begin{frame}{\scshape Motivation}
-%  "How does energy (entropy) deposition scale in a relativistic nuclear collision as a function of nuclear overlap density?" \\[0.1\textheight]
-%
-%  "Do hydrodynamic simulations---using appropriately constructed energy profiles---provide quantitative descriptions of relativistic nuclear collisions?"
-%\end{frame}
-%
-%\begin{frame}[plain]
-%  \begin{columns}
-%    \begin{column}{.1\textwidth}
-%    \end{column}
-%    \begin{column}{.85\textwidth}
-%    {\Large
-%    \setbeamercovered{transparent=50}
-%    \begin{itemize}
-%      \item<1-2>[\scshape \color{theme} Part I:] Bayesian analysis of entropy deposition in relativistic nuclear collisions\\[2ex]
-%      \item<1>[\scshape \color{theme} Part II:] Using Bayesian methods to explore nucleon substructure
-%    \end{itemize}
-%    }%
-%    \end{column}
-%  \end{columns}
-%\end{frame}
 
 \begin{frame}{Lattice predicts existence of a quark-gluon plasma}
   Lattice QCD calculations find a pseudo-critical phase transition temperature $T \approx 155$~MeV, where hadrons melt to form a deconfined soup of quarks and gluons dubbed a quark-gluon plasma (QGP)\\[2ex]
@@ -191,6 +164,83 @@
         \end{tikzpicture}
     \end{center}
 \end{frame}
+
+\begin{frame}{Formulating an inverse problem}
+  \begin{center}
+    \only<1>{{\scshape Ideal theory picture} \\[5ex]}
+    \only<2>{{\scshape Realistic theory picture} \\[5ex]}
+    \only<3>{{\scshape Parametrize Theory landscape} \\[5ex]}
+    \only<4-6>{{\scshape Bayesian parameter estimation} \\[5ex]}
+  \begin{tikzpicture} 
+    \node<1-3>[align=left] (a1) at (current page.center){Model A};
+    \node<1-3>[right = 1ex of a1] (b1) {Model B};
+    \node<1-3>[right = 1ex of b1] (c1) {Model C};
+    \node<1-3>[right = 1ex of c1] (d1) {Model D};
+    \node<1-3>[right = 1ex of d1] (e1) {Model E};
+    \node<4-6>[align=center] at (c1) {continuous model parameter: $x$};
+
+    \node<1>[above = 0ex of b1, overlay] {\Large \faicon{check}};
+    \node<2>[above = 0ex of b1, overlay] {\Large \faicon{question}};
+    \node<2>[above = 0ex of c1, overlay] {\Large \faicon{question}};
+
+    \node[below = 8ex of a1] (a2) {};
+    \node[below = 8ex of b1] (b2) {};
+    \node[below = 8ex of c1] (c2) {};
+    \node[below = 8ex of d1] (d2) {};
+    \node[below = 8ex of e1] (e2) {};
+
+    \node<1>[below = 8ex of b1] (exp) {Exp Data};
+    \node<2-6>[below = 8ex of b1, xshift = 5.5ex] (exp) {Exp Data};
+
+    \draw<1-3>[->] (a1) edge (a2);
+    \draw<1-3>[->] (b1) edge (b2);
+    \draw<1-3>[->] (c1) edge (c2);
+    \draw<1-3>[->] (d1) edge (d2);
+    \draw<1-3>[->] (e1) edge (e2);
+
+    \draw<3-6>[thick, rounded corners, overlay] (a1.south west) rectangle (e1.north east);
+
+    \draw<4>[->, transform canvas={xshift=1cm}] (c2) edge (c1);
+    \node<4>[below=2ex of c1, transform canvas={xshift=2.8cm}]
+    {$P(x_\star| \text{model}, \text{data})$};
+
+    \draw<5>[->, transform canvas={xshift=0cm}] (c2) edge (c1);
+    \node<5>[below=2ex of c1, transform canvas={xshift=1.8cm}]
+    {$P(x_\star| \text{model}, y_\text{exp})$};
+
+    \draw<6>[->, transform canvas={xshift=-0.8cm}] (c2) edge (c1);
+    \node<6>[below=2ex of c1, transform canvas={xshift=1cm}]
+    {$P(x_\star| \text{model}, y_\text{exp})$};
+
+    \node<4-6>[below=4ex of c2, overlay, align=center]
+    {{\scshape Bayes' Theorem:}\\$\underbrace{P(x_\star| \text{model},\text{data})}_\text{posterior} \propto \underbrace{P(\text{model},\text{data}|x_\star)}_\text{likelihood}\underbrace{P(x_\star)}_\text{prior}$};
+  \end{tikzpicture}\\
+    \only<7>{
+      {\scshape Yields posterior distribution on $x_\star$}\\[2ex]
+      \includegraphics[scale=.8]{bayes}\\
+      \emph{Includes uncertainty in ``best-fit value''}
+    }
+  \end{center}
+\end{frame}
+
+
+\begin{frame}{Bayesian parameter estimation in physics}
+  \begin{columns}
+    \begin{column}{0.4\textwidth}
+      \centering {\scshape LIGO Experiment}\\
+      \includegraphics[width=\columnwidth]{ligo} \\
+      est.\ black hole masses\\
+      {\scriptsize PRL 118.221101}\\
+    \end{column}
+    \begin{column}{0.6\textwidth}
+      \begin{itemize}
+        \item {\scshape Cosmological standard model}
+      \end{itemize}
+    \end{column}
+  \end{columns}
+
+\end{frame}
+
 
 
 \begin{frame}{Quark-gluon plasma is not directly detectable}
