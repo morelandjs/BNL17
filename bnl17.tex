@@ -165,19 +165,17 @@
     \end{center}
 \end{frame}
 
+
 \begin{frame}{Formulating an inverse problem}
   \begin{center}
     \only<1>{{\scshape Model-to-data comparison (in an ideal world)} \\[5ex]}
     \only<2>{{\scshape Realistic model-to-data comparison} \\[5ex]}
-    \only<3>{{\scshape Parametrize Theory landscape} \\[5ex]}
-    \only<4-6>{{\scshape Bayesian parameter estimation} \\[5ex]}
   \begin{tikzpicture} 
-    \node<1-3>[align=left] (a1) at (current page.center){Model A};
-    \node<1-3>[right = 1ex of a1] (b1) {Model B};
-    \node<1-3>[right = 1ex of b1] (c1) {Model C};
-    \node<1-3>[right = 1ex of c1] (d1) {Model D};
-    \node<1-3>[right = 1ex of d1] (e1) {Model E};
-    \node<4-6>[align=center] at (c1) {continuous model parameter: $x$};
+    \node<1->[align=left] (a1) at (current page.center){Model A};
+    \node<1->[right = 1ex of a1] (b1) {Model B};
+    \node<1->[right = 1ex of b1] (c1) {Model C};
+    \node<1->[right = 1ex of c1] (d1) {Model D};
+    \node<1->[right = 1ex of d1] (e1) {Model E};
 
     \node<1>[above = 0ex of b1, overlay] {\Large \faicon{check}};
     \node<2>[above = 0ex of b1, overlay] {\Large \faicon{question}};
@@ -190,32 +188,69 @@
     \node[below = 8ex of e1] (e2) {};
 
     \node<1>[below = 8ex of b1] (exp) {Exp Data};
-    \node<2-6>[below = 8ex of b1, xshift = 5.1ex] (exp) {Exp Data};
+    \node<2->[below = 8ex of b1, xshift = 5.1ex] (exp) {Exp Data};
 
-    \draw<1-3>[->] (a1) edge (a2);
-    \draw<1-3>[->] (b1) edge (b2);
-    \draw<1-3>[->] (c1) edge (c2);
-    \draw<1-3>[->] (d1) edge (d2);
-    \draw<1-3>[->] (e1) edge (e2);
+    \draw<1->[->] (a1) edge (a2);
+    \draw<1->[->] (b1) edge (b2);
+    \draw<1->[->] (c1) edge (c2);
+    \draw<1->[->] (d1) edge (d2);
+    \draw<1->[->] (e1) edge (e2);
+  \end{tikzpicture}\\
+  \end{center}
+\end{frame}
 
-    \draw<3-6>[thick, rounded corners, overlay] (a1.south west) rectangle (e1.north east);
 
-    \draw<4>[->, transform canvas={xshift=1cm}] (c2) edge (c1);
-    \node<4>[below=2ex of c1, transform canvas={xshift=2.8cm}]
+\begin{frame}[plain]
+  \begin{center}
+    \scshape \large I) Bayesian parameter estimation
+  \end{center}
+\end{frame}
+
+
+\begin{frame}{Formulating an inverse problem}
+  \begin{center}
+    \only<1>{{\scshape Parametrize Theory landscape} \\[5ex]}
+    \only<2-4>{{\scshape Bayesian parameter estimation} \\[5ex]}
+  \begin{tikzpicture} 
+    \node<1>[align=left] (a1) at (current page.center){Model A};
+    \node<1>[right = 1ex of a1] (b1) {Model B};
+    \node<1>[right = 1ex of b1] (c1) {Model C};
+    \node<1>[right = 1ex of c1] (d1) {Model D};
+    \node<1>[right = 1ex of d1] (e1) {Model E};
+    \node<2-4>[align=center] at (c1) {continuous model parameter: $x$};
+
+    \node[below = 8ex of a1] (a2) {};
+    \node[below = 8ex of b1] (b2) {};
+    \node[below = 8ex of c1] (c2) {};
+    \node[below = 8ex of d1] (d2) {};
+    \node[below = 8ex of e1] (e2) {};
+
+    \node<1-4>[below = 8ex of b1, xshift = 5.1ex] (exp) {Exp Data};
+
+    \draw<1>[->] (a1) edge (a2);
+    \draw<1>[->] (b1) edge (b2);
+    \draw<1>[->] (c1) edge (c2);
+    \draw<1>[->] (d1) edge (d2);
+    \draw<1>[->] (e1) edge (e2);
+
+    \draw<1-4>[thick, rounded corners, overlay] (a1.south west) rectangle (e1.north east);
+
+    \draw<2>[->, transform canvas={xshift=1cm}] (c2) edge (c1);
+    \node<2>[below=2ex of c1, transform canvas={xshift=2.8cm}]
     {$P(x_\star| \text{model}, \text{data})$};
 
-    \draw<5>[->, transform canvas={xshift=0cm}] (c2) edge (c1);
-    \node<5>[below=2ex of c1, transform canvas={xshift=1.8cm}]
+    \draw<3>[->, transform canvas={xshift=0cm}] (c2) edge (c1);
+    \node<3>[below=2ex of c1, transform canvas={xshift=1.8cm}]
     {$P(x_\star| \text{model}, y_\text{exp})$};
 
-    \draw<6>[->, transform canvas={xshift=-0.8cm}] (c2) edge (c1);
-    \node<6>[below=2ex of c1, transform canvas={xshift=1cm}]
+    \draw<4>[->, transform canvas={xshift=-0.8cm}] (c2) edge (c1);
+    \node<4>[below=2ex of c1, transform canvas={xshift=1cm}]
     {$P(x_\star| \text{model}, y_\text{exp})$};
 
-    \node<4-6>[below=4ex of c2, overlay, align=center]
+    \node<2-4>[below=4ex of c2, overlay, align=center]
     {{\scshape Bayes' Theorem:}\\$\underbrace{P(x_\star| \text{model},\text{data})}_\text{posterior} \propto \underbrace{P(\text{model},\text{data}|x_\star)}_\text{likelihood}\underbrace{P(x_\star)}_\text{prior}$};
   \end{tikzpicture}\\
-    \only<7>{
+    \only<5>{
       {\scshape Yields posterior distribution on $x_\star$}\\[2ex]
       \includegraphics[scale=.8]{bayes}\\
       \emph{Includes uncertainty in ``best-fit value''}
@@ -224,7 +259,118 @@
 \end{frame}
 
 
+\begin{frame}{Multiple observables}
+  \begin{center}
+    {\large posterior = likelihood $\times$ prior}\\[2ex]
+    More than one observable $f: x \mapsto (y_1, ..., y_n)$?\\
+    No problem, calculate likelihood using multivariate Gaussian
+  \end{center}
+  \begin{block}{Log-likelihood}
+    \vspace{-3ex}
+    \begin{align*}
+      \ln(L) &= -\frac{1}{2}(\ln(|\boldsymbol{\Sigma}|) + (\mathbf{y} - \mathbf{y}_\text{exp})^T \boldsymbol{\Sigma}^{-1} (\mathbf{y} - \mathbf{y}_\text{exp}) + k \ln(2\pi))\\
+      \boldsymbol{\Sigma} &= \boldsymbol{\Sigma}_\text{model} + \boldsymbol{\Sigma}_\text{exp}^\text{stat} + \boldsymbol{\Sigma}_\text{exp}^\text{sys}
+    \end{align*}
+  \end{block}
+\end{frame}
+
+
+\begin{frame}{Multiple model parameters}
+  \begin{center}
+    {\large posterior = likelihood $\times$ prior}\\[2ex]
+    Likelihood function $L(x) \rightarrow L(x_1, ...,x_n)$
+  \end{center}
+  \begin{columns}[t]
+    \begin{column}{0.5\textwidth}
+      \begin{block}{Curse of dimensionality}
+        Typically interested in marginalized probabilities\\[1ex]
+        $L(x_1,...,x_n)$ easy to calculate,\\
+        hard to integrate.
+      \end{block}
+
+      \begin{block}{Solution}
+        Monte Carlo integration,
+        e.g.\ importance sampling
+      \end{block}
+    \end{column}
+    \vline
+    \begin{column}{0.5\textwidth}
+      \begin{center}
+        {\color{theme} MCMC importance sampling:}\\[1ex]
+        \begin{enumerate}
+          \item large number of walkers in $\{x_1,...,x_n\}$ space
+          \item perturb walker positions
+          \item accept new $\mathbf x$ with prob\\
+            $P \sim L_\text{new} / L_\text{old}$
+        \end{enumerate}
+        Marginalize by histogramming over flattened dimensions
+      \end{center}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+
+\begin{frame}{MCMC and evaluating the likelihood}
+  \begin{center}
+    Number of likelihood samples needed for MCMC varies greatly
+  \end{center}
+  \includegraphics[width=\textwidth]{mcmc}\\
+  \begin{center}
+    Several of the published results in this talk use $N_\text{sample} > 10^6$\\
+    If model is slow, e.g.\ 1 CPU hour per likelihood evaluation\\
+    \faicon{clock-o} ...good luck
+  \end{center}
+\end{frame}
+
+
+\begin{frame}{Training an emulator}
+  \vspace{1em}
+  \begin{columns}[c]
+    \column{.58\textwidth}
+    Gaussian process:
+    \begin{itemize}
+      \item Stochastic function: maps inputs to normally-distributed outputs
+      \item Specified by mean and covariance functions
+    \end{itemize}
+    \bigskip
+    As a model emulator:
+    \begin{itemize}
+      \item Non-parametric interpolation
+      \item Predicts \emph{probability distributions}
+        \begin{itemize}
+          \item Narrow near training points, \\ wide in gaps
+        \end{itemize}
+      \item Fast surrogate to actual model
+    \end{itemize}
+    \column{.45\textwidth}
+    \includegraphics{gp}
+  \end{columns}
+\end{frame}
+
+
+\begin{frame}{Workflow}
+  \begin{flushleft}
+    \begin{tikzpicture}
+      \node[align=center] (x1) at (current page.center) {\Large Physics model};
+      \node[rectangle, draw=white, fill=theme!20, align=center, yshift=-1.5cm, minimum width=5cm, minimum height=1cm] (x2) at (current page.center) {\Large Emulated model};
+      \node[rectangle, draw=white, fill=theme!20, align=center, yshift=-2cm, minimum width=5cm, minimum height=1cm] (x3) at (x2.center) {\Large MCMC update};
+      \node[align=center, xshift=-4.25cm, yshift=0cm] (x4) at (x2.center) {update walkers\\$\{\mathbf{x}\} \rightarrow \{\mathbf{x'}\}$};
+      \node[align=center, yshift=-2cm] (x5) at (x3.center) {\Large Bayesian posterior};
+      \node[align=left, xshift=1.5cm] (x6) at (x2.east) {$\mathbf{y}=f(\mathbf{x})$};
+      \node[align=left, xshift=1.5cm] (x7) at (x3.east) {$L(\mathbf{y}, \mathbf{y}_\text{exp})$};
+      \node[align=center, yshift=-0.7cm] (x8) at (x3.center) {...after many steps};
+      \node[align=center, yshift=-.1cm] (x9) at (x5.south) {histogram $\{\mathbf{x}\}$ to visualize};
+      \draw[->, thick] (x1) edge (x2);
+      \draw[->, thick] (x8) edge (x5);
+      \draw[->, thick] (x2.east) to [out=0, in=360] (x3.east);
+      \draw[->, thick] (x3.west) to [out=180, in=-180] (x2.west);
+    \end{tikzpicture}
+  \end{flushleft}
+\end{frame}
+
+
 \begin{frame}{Bayesian parameter estimation in physics}
+  \bigskip
   \begin{columns}
     \begin{column}{0.4\textwidth}
       \centering {\scshape LIGO Experiment}\\
@@ -238,14 +384,50 @@
           constraints on inflation\\
           {\scriptsize Astron.~Astrophys. 594 (2016)}\\[2ex]
         \item CKM parameters\\
-          {\scriptsize Eur.~Phys.~J. C21 (2001)}
+          {\scriptsize Eur.~Phys.~J. C21 (2001)}\\[2ex]
+        \item {\scshape Galaxy formation}\\
+          {\scriptsize Astron.~Astrophys. 409 (2003)}
       \end{itemize}
+      \bigskip
+      \small ...and many more examples not listed here
     \end{column}
   \end{columns}
-
+  \bigskip
+  \begin{tcolorbox}[colback=theme!10, colframe=theme!0]
+    Adapt machinery to relativistic heavy-ion collisions?
+  \end{tcolorbox}
 \end{frame}
 
 
+\begin{frame}[plain]
+  \begin{center}
+    \scshape \large II) Bayesian parameter estimation\\applied to heavy-ion physics
+  \end{center}
+\end{frame}
+
+
+\begin{frame}[t]{Bayesian methodology for heavy-ion collisions}
+  \begin{center}
+  {\small
+  \begin{tabular}{lll}
+    {\scshape Trusted framework} & {\scshape Experimental data} & {\scshape Free parameter(s)} \\
+    \noalign{\smallskip}\hline\noalign{\medskip}
+    General relativity & gravitational waves & black hole masses \\[.5ex]
+    Quantum field theory & cross sections & CKM mixing angles\\[.5ex]
+    {\scriptsize\faicon{exclamation-triangle}} Relativistic hydro & particle yields \& corr. & transport coeff, ... 
+  \end{tabular}
+  }
+  \end{center}
+
+  \begin{tcolorbox}[colback=theme!10, colframe=theme!0]
+    \begin{itemize}
+      \small
+    \item[\color{offblack} \scriptsize \faicon{exclamation-triangle}] Using hydro for HIC not trusted on same level as e.g.\ GR for gravitational waves. Nevertheless, its application to HIC is supported by overwhelming empirical evidence.
+      \item Posterior results \underline{always} subject to framework credibility
+      \item Known-unknowns are quantifiable in the posterior, unknown-unknowns are not!
+    \end{itemize}
+  \end{tcolorbox}
+\end{frame}
 
 \begin{frame}{Quark-gluon plasma is not directly detectable}
     \medskip
@@ -965,31 +1147,6 @@
   \end{columns}
 \end{frame}
 
-
-\newcommand{\ydiff}{(\mathbf y - \mathbf y_\text{exp})}
-%
-\begin{frame}{Markov-chain Monte Carlo}
-  \medskip
-    Perform random walk through parameter space, weighted by the Bayesian posterior probability:
-  \begin{center}
-    \textbf{Bayes' theorem} \\
-    posterior ${}\propto{}$ likelihood ${}\times{}$ prior
-  \end{center}
-  Prior = flat in design space \\[1ex]
-  Likelihood${} \propto \exp\bigl[ -\frac{1}{2} \ydiff\tran \Sigma^{-1} \ydiff \bigr]$ \\[.5ex]
-  \begin{itemize}
-    \setlength{\itemsep}{.8ex}
-    \item $\Sigma = \text{covariance matrix} = \Sigma_\text{experiment} + \Sigma_\text{model}$
-    \item $\Sigma_\text{experiment} = {}$stat (diagonal) + sys (non-diagonal)
-    \item $\Sigma_\text{model}$ conservatively estimated as 5\% (to be improved)
-  \end{itemize}
-  \smallskip
-  \begin{tcolorbox}[width=\textwidth, colback=theme!10, colframe=theme!0]
-    \emph{\color{theme} Posterior dist.\ determined from equilibriated walker density}
-  \end{tcolorbox}
-\end{frame}
-
-
 \begin{frame}[b]{Model calibration}
   \begin{tikzpicture}[remember picture, overlay]
     \only<1>{
@@ -1078,7 +1235,7 @@
       \node at ([yshift=2em]current page.center) {
         \begin{tcolorbox}[colback=theme!20!offblack, colframe=theme, boxrule=0pt, opacityframe=.8, opacityback=.8]
           \centering
-          \LARGE\color{white} What's the best the model can do?
+          \Large\color{white} What's the best the model can do?
         \end{tcolorbox}
       };
     \end{tikzpicture}
