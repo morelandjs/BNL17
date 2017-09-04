@@ -75,6 +75,7 @@
 \usetikzlibrary{arrows}
 
 \usepackage{amsmath}
+\usepackage{setspace}
 
 \usepackage[T1]{fontenc}
 %% main font
@@ -120,7 +121,7 @@
 \newcommand{\T}{\tilde{T}}
 
 \title[Bayesian parameter estimation for HIC]{Bayesian parameter estimation for heavy-ion collisions: inferring properties of the quark-gluon plasma}
-\author[J.\ S.\ Moreland]{J.\ S.\ Moreland,\, J.\ E.\ Bernhard,\, W.\ Ke,\, S.\ A.\ Bass}
+\author[J.\ S.\ Moreland]{J.\ S.\ Moreland,\, J.\ E.\ Bernhard,\, Y.\ Xu, W.\ Ke,\, S.\ A.\ Bass}
 \institute[Duke U.]{Duke Univerity}
 \date{\today}
 
@@ -200,7 +201,7 @@
 \end{frame}
 
 
-\begin{frame}[plain]
+\begin{frame}[plain, noframenumbering]
   \begin{center}
     \scshape \large I) Bayesian parameter estimation
   \end{center}
@@ -399,7 +400,7 @@
 \end{frame}
 
 
-\begin{frame}[plain]
+\begin{frame}[plain, noframenumbering]
   \begin{center}
     \scshape \large II) Bayesian parameter estimation\\applied to heavy-ion physics
   \end{center}
@@ -412,21 +413,190 @@
   \begin{tabular}{lll}
     {\scshape Trusted framework} & {\scshape Experimental data} & {\scshape Free parameter(s)} \\
     \noalign{\smallskip}\hline\noalign{\medskip}
-    General relativity & gravitational waves & black hole masses \\[.5ex]
-    Quantum field theory & cross sections & CKM mixing angles\\[.5ex]
-    {\scriptsize\faicon{exclamation-triangle}} Relativistic hydro & particle yields \& corr. & transport coeff, ... 
+    General relativity & gravitational waves & black hole masses \\[1ex]
+    {\scriptsize\faicon{exclamation-triangle}} Relativistic hydro
+    & particle yields \& corr. & transport coefficients 
   \end{tabular}
   }
   \end{center}
 
+  \begin{tikzpicture}[remember picture, overlay]
+    \node[rotate=45] at (0.1, 2.4) {\color{pyred} \bf Analogue};
+  \end{tikzpicture}
+
+  \only<1>{
+    \includegraphics[width=\textwidth]{hic_picture1}\\
+    \scriptsize
+    Hydro framework imposes local energy and momentum conservation.\\
+    Clearly breaks in dilute limit. Should apply with care.
+  }
+
+  \only<2>{
   \begin{tcolorbox}[colback=theme!10, colframe=theme!0]
     \begin{itemize}
       \small
-    \item[\color{offblack} \scriptsize \faicon{exclamation-triangle}] Using hydro for HIC not trusted on same level as e.g.\ GR for gravitational waves. Nevertheless, its application to HIC is supported by overwhelming empirical evidence.
+      \item[\color{offblack} \scriptsize \faicon{exclamation-triangle}] Hydro for heavy-ion collisions not trusted on same level as e.g.\ GR for gravitational waves
+      \item Hydro overwhelmingly supported by empirical evidence
       \item Posterior results \underline{always} subject to framework credibility
       \item Known-unknowns are quantifiable in the posterior, unknown-unknowns are not!
     \end{itemize}
-  \end{tcolorbox}
+  \end{tcolorbox}}
+\end{frame}
+
+\begin{frame}{Seminal Bayesian works in heavy-ion physics}
+  \begin{columns}[T]
+    \begin{column}{0.5\textwidth}
+      \includegraphics[width=\textwidth]{pratt_fig11}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \begin{itemize}
+        \item Event-averaged hydro
+        \item Parametric pre-flow
+        \item Parametric initial state
+        \item First Bayesian posterior on $(\eta/s)(T)$
+        \item Omits bulk viscosity
+        \item Two centrality bins
+      \end{itemize}
+    \end{column}
+  \end{columns}
+  \vspace{1cm}
+  \begin{columns}[T]
+    \begin{column}{0.025\textwidth}
+    \end{column}
+    \begin{column}{0.05\textwidth}
+      \raggedleft
+      \includegraphics[width=\columnwidth]{michigan-state}\\
+      \includegraphics[width=.8\columnwidth]{duke}
+    \end{column}
+    \begin{column}{0.9\textwidth}
+      \scriptsize \setstretch{1.2}
+      \textbf{Determining Fundamental Properties of Matter Created in Ultrarelativistic Heavy-Ion Collisions}, Novak, Novak, Pratt, Vredevoogd, Coleman-Smith, Wolpert
+      PRC 89 (2014) 034917
+    \end{column}
+    \begin{column}{0.025\textwidth}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Seminal Bayesian works in heavy-ion physics}
+  \begin{itemize}
+    \item Equation of state from lattice QCD is very close to parametric equation of state preferred by simulation
+  \end{itemize}
+  \begin{center}
+    \includegraphics[width=.8\textwidth]{priorvpost50}
+  \end{center}
+  \begin{columns}[T]
+    \begin{column}{0.025\textwidth}
+    \end{column}
+    \begin{column}{0.05\textwidth}
+      \raggedleft
+      \includegraphics[width=\columnwidth]{michigan-state}\\[-0.5ex]
+      \textbf{\small BNL}
+    \end{column}
+    \begin{column}{0.9\textwidth}
+      \scriptsize \setstretch{1.2}
+      \textbf{Constraining the Eq.\ of State of Super-Hadronic Matter from Heavy-Ion Collisions}, Pratt, Sangaline, Sorensen, Wang, PRL 114 (2015) 202301
+    \end{column}
+    \begin{column}{0.025\textwidth}
+    \end{column}
+  \end{columns}
+
+\end{frame}
+
+\begin{frame}{Seminal Bayesian works in heavy-ion physics}
+  \begin{columns}[T]
+    \begin{column}{0.55\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{post_compare}\\
+      {\scriptsize Theoretical biases affect preferred viscosity}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \begin{itemize}
+        \item Event-by-event hydro
+        \item MC-Glauber \& KLN initial conditions
+        \item Centrality bins like experiment
+        \item Constant $\eta/s$
+        \item Omits bulk viscosity, pre-flow
+      \end{itemize}
+    \end{column}
+  \end{columns}
+  \vspace{1cm}
+  \begin{columns}[T]
+    \begin{column}{0.025\textwidth}
+    \end{column}
+    \begin{column}{0.05\textwidth}
+      \raggedleft
+      \includegraphics[width=.8\columnwidth]{duke}
+    \end{column}
+    \begin{column}{0.9\textwidth}
+      \scriptsize \setstretch{1.2}
+      \textbf{Constraining the Eq.\ of State of Super-Hadronic Matter from Heavy-Ion Collisions}, Bernhard, Marcy, Coleman-Smith, Huzurbazar, Wolpert, Bass, PRC 91 (2015) 054910
+    \end{column}
+    \begin{column}{0.025\textwidth}
+    \end{column}
+  \end{columns}
+
+\end{frame}
+
+\begin{frame}{Seminal Bayesian works in heavy-ion physics}
+  \vspace{-.5cm}
+  \begin{center}
+    \includegraphics[width=0.5\textwidth, rotate=-90]{sensitivity}\\[.5ex]
+    \scriptsize Sensitivity of experimental observables to model parameters
+  \end{center}
+  \begin{columns}[T]
+    \begin{column}{0.025\textwidth}
+    \end{column}
+    \begin{column}{0.05\textwidth}
+      \raggedleft
+      \includegraphics[width=\columnwidth]{michigan-state}
+    \end{column}
+    \begin{column}{0.9\textwidth}
+      \scriptsize \setstretch{1.2}
+      \textbf{Towards a Deeper Understanding of How Experiments Constrain the Underlying Physics of Heavy-Ion Collisions}, Sangaline, Pratt, PRC 93 (2016) 024908
+    \end{column}
+    \begin{column}{0.025\textwidth}
+    \end{column}
+  \end{columns}
+
+\end{frame}
+
+\begin{frame}{Towards precision extraction of QGP properties}
+  \begin{columns}[T]
+    \begin{column}{0.025\textwidth}
+    \end{column}
+    \begin{column}{0.05\textwidth}
+      \raggedleft
+      \includegraphics[width=\columnwidth]{duke}\\[.5ex]
+      \includegraphics[width=.9\columnwidth]{osu}
+    \end{column}
+    \begin{column}{0.9\textwidth}
+      \scriptsize \setstretch{1.2}
+      \textbf{Applying Bayesian parameter estimation to relativistic heavy-ion collisions: simultaneous characterization of the initial state and QGP medium},\\
+      Bernhard, Moreland, Bass, Liu, Heinz PRC 94 (2016) 024907
+    \end{column}
+    \begin{column}{0.025\textwidth}
+    \end{column}
+  \end{columns}
+
+  \bigskip
+
+  \begin{columns}
+    \begin{column}{.5\textwidth}
+      \begin{block}{Generational improvements}
+        \begin{itemize}
+          \scriptsize 
+          \item New \textbf{\trento} initial condition model: absorbs initial state uncertainties into several free parameters
+          \item Full event-by-event hydro with hadronic afterburner
+          \item Calculate observables exactly as experiment
+          \item Bulk and shear viscous corrections
+          \item \emph{More} experimental observables
+        \end{itemize}
+      \end{block}
+    \end{column}
+    \begin{column}{.5\textwidth}
+    \end{column}
+  \end{columns}
 \end{frame}
 
 \begin{frame}{Quark-gluon plasma is not directly detectable}
