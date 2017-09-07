@@ -279,9 +279,10 @@
 
 \begin{frame}{Multiple model parameters}
   \begin{center}
-    {\large posterior = likelihood $\times$ prior}\\[2ex]
+    {\large posterior = likelihood $\times$ prior}\\[1ex]
     Likelihood function $L(x) \rightarrow L(x_1, ...,x_n)$
   \end{center}
+  \vspace{-2ex}
   \begin{columns}[t]
     \begin{column}{0.5\textwidth}
       \begin{block}{Curse of dimensionality}
@@ -301,7 +302,7 @@
         {\color{theme} MCMC importance sampling:}\\[1ex]
         \begin{enumerate}
           \item large number of walkers in $\{x_1,...,x_n\}$ space
-          \item perturb walker positions
+          \item update walker positions
           \item accept new $\mathbf x$ with prob\\
             $P \sim L_\text{new} / L_\text{old}$
         \end{enumerate}
@@ -433,13 +434,11 @@
   }
 
   \only<2>{
+  \vspace{.4cm}
   \begin{tcolorbox}[colback=theme!10, colframe=theme!0]
     \begin{itemize}
-      \small
-      \item[\color{offblack} \scriptsize \faicon{exclamation-triangle}] Hydro for heavy-ion collisions not trusted on same level as e.g.\ GR for gravitational waves
-      \item Hydro overwhelmingly supported by empirical evidence
+      \item[\color{offblack} \scriptsize \faicon{exclamation-triangle}] Hydro for heavy-ion collisions not trusted on same level as e.g.\ GR for gravitational waves\\[1ex]
       \item Posterior results \underline{always} subject to framework credibility
-      \item Known-unknowns are quantifiable in the posterior, unknown-unknowns are not!
     \end{itemize}
   \end{tcolorbox}}
 \end{frame}
@@ -539,6 +538,37 @@
 
 \end{frame}
 
+\begin{frame}{Initial stages and onset of hydrodynamic flow}
+  \begin{center}
+    Strong coupling limit $\rightarrow$ hydrodynamics\\
+    Weak coupling limit $\rightarrow$ freestreaming
+  \end{center}
+  \begin{columns}
+    \begin{column}{.55\textwidth}
+      \includegraphics[width=\columnwidth]{freestreaming_sketch}
+    \end{column}
+    \begin{column}{.45\textwidth}
+      \includegraphics[width=\columnwidth]{heinz-liu}
+    \end{column}
+  \end{columns}
+  \vspace{.75cm}
+  \begin{columns}
+    \begin{column}{0.15\textwidth}
+    \end{column}
+    \begin{column}{0.05\textwidth}
+      \raggedleft
+      \includegraphics[width=.9\columnwidth]{osu}
+    \end{column}
+    \begin{column}{0.65\textwidth}
+      \scriptsize \setstretch{1.2}
+      \textbf{Pre-equilibrium dynamics and heavy-ion observables},\\
+      Heinz, Liu, Nucl.\ Phys.\ A956 (2016) 549-552
+    \end{column}
+    \begin{column}{0.15\textwidth}
+    \end{column}
+  \end{columns}
+\end{frame}
+
 \begin{frame}{Towards precision extraction of QGP properties}
   \begin{columns}[T]
     \begin{column}{0.025\textwidth}
@@ -609,6 +639,41 @@
 \end{frame}
 
 
+\begin{frame}{Leveraging data from RHIC beam energy scan}
+  \medskip
+  \includegraphics<1>[height=0.7\textheight]{corner_19}
+  \includegraphics<2>[height=0.7\textheight]{corner_39}
+  \includegraphics<3-4>[height=0.7\textheight]{corner_62}
+  \begin{tikzpicture}[remember picture, overlay]
+    \only<1>{\node[align=left] at (-1.8, 5.8) {\Large $\sqrt{s_{NN}}=19$~GeV};}
+    \only<2>{\node[align=left] at (-1.8, 5.8) {\Large $\sqrt{s_{NN}}=39$~GeV};}
+    \only<3>{\node[align=left] at (-1.8, 5.8) {\Large $\sqrt{s_{NN}}=62$~GeV};}
+    \only<1-3>{\node[align=left, text width=5.5cm] at (2, 4){\large Left: Bayesian posterior for hydrodynamic model parameters calibrated at different beam energies $\sqrt{s_{NN}}$};}
+    \only<4>{\node[align=center] at (2, 3.8) {
+      \smallskip 
+      \small \quad Beam-energy dependence of $\langle \eta/s \rangle$\\
+      \includegraphics[scale=.28]{bes_CL90_etas}
+    };}
+  \end{tikzpicture}
+  \begin{columns}[T]
+    \begin{column}{0.025\textwidth}
+    \end{column}
+    \begin{column}{0.05\textwidth}
+      \raggedleft
+      \includegraphics[width=\columnwidth]{duke}
+    \end{column}
+    \begin{column}{0.9\textwidth}
+      \scriptsize \setstretch{1.2}
+      \textbf{Revealing the collision energy dependence of $\eta/s$ in RHIC-BES Au+Au
+      collisions using Bayesian statistics},\\
+      Auvinen, Karpenko, Bernhard, Bass, QM17 proceedings
+    \end{column}
+    \begin{column}{0.025\textwidth}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+
 \begin{frame}{Bulk viscosity: a work in progress...}{}
   \medskip
   {\scshape Challenges}
@@ -616,7 +681,7 @@
     \small
     \item Different methods for bulk viscous corrections at freezeout
     \item Less obvious parametric form for $(\zeta/s)(T)$
-    \item Hydro breaks (cavitates) if bulk is too large 
+    \item Hydro cavitates if bulk is too large 
   \end{itemize}
   \vspace{.5cm}
 
@@ -638,6 +703,7 @@
     \end{column}
   \end{columns}
 \end{frame}
+
 
 \begin{frame}{Studying the QGP fireball in 3D}
   \begin{center}
@@ -712,7 +778,7 @@
     \end{column}
   \end{columns}
   \begin{itemize}
-    \item Trust in hydro and Bayesian statistical machinery let's us deconvolve complex system evolution
+    \item Trust in hydro and Bayesian statistical machinery lets us deconvolve complex system evolution
   \end{itemize}
 \end{frame}
 
@@ -744,6 +810,16 @@
     \textbf{A data driven analysis for the temperature and momentum dependence of the heavy quark diffusion coefficient in relativistic heavy-ion collisions}\\
     Xu, Bernhard, Bass, Nahrgang, Cao (in preparation)
   \end{flushleft}
+\end{frame}
+
+\begin{frame}{Summary}
+  \large Virtues of Bayesian parameter estimation
+  \begin{itemize}
+    \normalsize
+    \item Works for models with multiple correlated parameters
+    \item Rigorous accounting of errors and effect on quantities of interest
+    \item Global analysis can promote and kill models
+  \end{itemize}
 \end{frame}
 
 \appendix
